@@ -9,16 +9,17 @@ plugins {
 }
 
 kotlin {
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        moduleName = "composeApp"
-        browser {
-            commonWebpackConfig {
-                outputFileName = "composeApp.js"
-            }
-        }
-        binaries.executable()
-    }
+// Retest the WASM target when this Koin issues is resolved https://github.com/InsertKoinIO/koin/issues/1634
+//    @OptIn(ExperimentalWasmDsl::class)
+//    wasmJs {
+//        moduleName = "composeApp"
+//        browser {
+//            commonWebpackConfig {
+//                outputFileName = "composeApp.js"
+//            }
+//        }
+//        binaries.executable()
+//    }
     
     androidTarget {
         compilations.all {
@@ -38,7 +39,7 @@ kotlin {
             implementation(libs.androidx.activity.compose)
         }
         commonMain.dependencies {
-            implementation(platform(libs.koin.bom))
+            implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
 
@@ -102,6 +103,6 @@ compose.desktop {
     }
 }
 
-compose.experimental {
-    web.application {}
-}
+//compose.experimental {
+//    web.application {}
+//}
