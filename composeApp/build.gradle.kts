@@ -37,6 +37,9 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.koin.android)
+            implementation(libs.koin.androidx.compose)
+            implementation(libs.koin.compose.navigation)
         }
         commonMain.dependencies {
             implementation(project.dependencies.platform(libs.koin.bom))
