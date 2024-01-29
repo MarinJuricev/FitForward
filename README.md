@@ -25,3 +25,7 @@ We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public S
 If you face any issues, please report them on [GitHub](https://github.com/JetBrains/compose-multiplatform/issues).
 
 You can open the web application by running the `:composeApp:wasmJsBrowserDevelopmentRun` Gradle task.
+
+Desktop support in [Android studio is broken](https://github.com/JetBrains/compose-multiplatform/issues/3662) to test out desktop for now manually run:
+
+./gradlew :composeApp:run
