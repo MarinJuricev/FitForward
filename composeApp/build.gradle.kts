@@ -39,6 +39,12 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
+            // At the time of writing this Previews aren't available in the commonSource set
+            // this should also be a debugImplementation, so for the workaround we'll be adding
+            // the previews in the android target
+            implementation(compose.preview)
+            implementation(compose.uiTooling)
+
 //            implementation(libs.koin.compose.navigation)
         }
         commonMain.dependencies {
