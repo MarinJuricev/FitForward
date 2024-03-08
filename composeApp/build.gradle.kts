@@ -9,17 +9,17 @@ plugins {
 }
 
 kotlin {
-// Retest the WASM target when this Koin issues is resolved https://github.com/InsertKoinIO/koin/issues/1634
-//    @OptIn(ExperimentalWasmDsl::class)
-//    wasmJs {
-//        moduleName = "composeApp"
-//        browser {
-//            commonWebpackConfig {
-//                outputFileName = "composeApp.js"
-//            }
-//        }
-//        binaries.executable()
-//    }
+    // Retest the WASM target when this Koin issues is resolved https://github.com/InsertKoinIO/koin/issues/1634
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        moduleName = "composeApp"
+        browser {
+            commonWebpackConfig {
+                outputFileName = "composeApp.js"
+            }
+        }
+        binaries.executable()
+    }
     
     androidTarget {
         compilations.all {
@@ -57,7 +57,6 @@ kotlin {
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
             implementation(compose.ui)
-            @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
             implementation(projects.shared)
         }
@@ -113,6 +112,6 @@ compose.desktop {
     }
 }
 
-//compose.experimental {
-//    web.application {}
-//}
+compose.experimental {
+    web.application {}
+}
