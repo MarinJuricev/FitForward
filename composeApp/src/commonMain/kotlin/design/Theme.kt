@@ -74,17 +74,17 @@ private val DarkColors = darkColorScheme(
 
 @Composable
 fun FitForwardTheme(
-    useDarkTheme: Boolean = isSystemInDarkTheme(),
+    isDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colors = if (!useDarkTheme) {
-        LightColors
-    } else {
+    val colors = if (isDarkTheme) {
         DarkColors
+    } else {
+        LightColors
     }
 
     MaterialTheme(
-        colorScheme = colors,
+        colorScheme = DarkColors,
         content = content
     )
 }
