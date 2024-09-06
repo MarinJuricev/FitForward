@@ -4,7 +4,7 @@ import home.HomeScreen
 
 @Composable
 fun App() {
-    FitForwardTheme {
-        HomeScreen()
-    }
+  FitForwardTheme {
+    HomeScreen()
+  }
 }
