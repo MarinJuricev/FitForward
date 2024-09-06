@@ -1,30 +1,40 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
+    alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
 }
 
 kotlin {
-    // Retest the WASM target when this Koin issues is resolved https://github.com/InsertKoinIO/koin/issues/1634
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         moduleName = "composeApp"
         browser {
+            val projectDirPath = project.projectDir.path
             commonWebpackConfig {
                 outputFileName = "composeApp.js"
+                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+                    static = (static ?: mutableListOf()).apply {
+                        // Serve sources to debug inside browser
+                        add(projectDirPath)
+                    }
+                }
             }
         }
         binaries.executable()
     }
 
     androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
         }
     }
 
@@ -34,33 +44,24 @@ kotlin {
         val desktopMain by getting
 
         androidMain.dependencies {
-            implementation(libs.compose.ui.tooling.preview)
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.koin.android)
-            implementation(libs.koin.androidx.compose)
-            // At the time of writing this Previews aren't available in the commonSource set
-            // this should also be a debugImplementation, so for the workaround we'll be adding
-            // the previews in the android target
             implementation(compose.preview)
-            implementation(compose.uiTooling)
-
-//            implementation(libs.koin.compose.navigation)
+            implementation(libs.androidx.activity.compose)
         }
         commonMain.dependencies {
-            implementation(project.dependencies.platform(libs.koin.bom))
-            implementation(libs.koin.core)
-            implementation(libs.koin.compose)
-
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.materialIconsExtended)
             implementation(compose.ui)
             implementation(compose.components.resources)
+            implementation(compose.material3)
+            implementation(compose.materialIconsExtended)
+            implementation(compose.components.uiToolingPreview)
+            implementation(libs.androidx.lifecycle.viewmodel)
+            implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(projects.shared)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(libs.kotlinx.coroutines.swing)
         }
     }
 }
@@ -87,15 +88,18 @@ android {
     }
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    buildFeatures {
+        compose = true
     }
     dependencies {
-        debugImplementation(libs.compose.ui.tooling)
+        debugImplementation(compose.uiTooling)
     }
 }
 
@@ -109,8 +113,4 @@ compose.desktop {
             packageVersion = "1.0.0"
         }
     }
-}
-
-compose.experimental {
-    web.application {}
 }
