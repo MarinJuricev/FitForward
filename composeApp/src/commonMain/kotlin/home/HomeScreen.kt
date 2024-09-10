@@ -26,11 +26,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import core.DateProvider
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen() {
   val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+  val calendarPresenter = remember {
+    CalendarPresenter(
+      dateProvider = {
+        Clock.System.now()
+          .toLocalDateTime(TimeZone.currentSystemDefault())
+          .date
+      }
+    )
+  }
+
   Scaffold(
     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     bottomBar = {
@@ -63,6 +79,9 @@ fun HomeScreen() {
       )
     },
     content = { paddingValues ->
+      val dates by calendarPresenter.availableDates.collectAsStateWithLifecycle()
+
+
       Column(
         modifier = Modifier
           .padding(paddingValues)
@@ -78,8 +97,8 @@ fun HomeScreen() {
           modifier = Modifier.fillMaxSize(),
         ) {
           when (it) {
-            0 -> Text("1")
-            1 -> Text("2")
+            0 -> Text(dates.first().value)
+            1 -> Text(dates.toString())
             2 -> Text("3")
           }
         }

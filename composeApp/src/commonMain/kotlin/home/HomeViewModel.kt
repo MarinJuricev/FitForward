@@ -7,5 +7,4 @@ class HomeViewModel(
   private val dateProvider: DateProvider,
 ) : ViewModel() {
 
-  val
 }

@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.androidLibrary)
+  alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -46,9 +47,8 @@ kotlin {
 
   sourceSets {
     commonMain.dependencies {
-      implementation(project.dependencies.platform(libs.koin.bom))
-      implementation(libs.koin.core)
-      implementation(libs.kotlinx.datetime)
+      implementation(libs.kotlin.inject.runtime)
+      api(libs.kotlinx.datetime)
     }
   }
 }
@@ -63,4 +63,21 @@ android {
   defaultConfig {
     minSdk = libs.versions.android.minSdk.get().toInt()
   }
+}
+
+// Taken from:
+// https://github.com/evant/kotlin-inject-samples/blob/main/multiplatform/greeter/shared/build.gradle.kts
+// Tivi has a more interesting approach where it loops over the targets and add the KotlinInject compiler
+// to each one. This is a more manual approach which is okay for the time being:
+
+// TODO: Explore the Tivi approach with the Gradle Convention Plugin
+// https://github.dev/chrisbanes/tivi/blob/26510df448c7a5b2c16561af05a0935fbbb0b9a1/gradle/build-logic/convention/src/main/kotlin/app/tivi/gradle/KotlinMultiplatformConventionPlugin.kt#L102-L103
+dependencies {
+  // KSP will eventually have better multiplatform support and we'll be able to simply have
+  // `ksp libs.kotlinInject.compiler` in the dependencies block of each source set
+  // https://github.com/google/ksp/pull/1021
+  add("kspAndroid", libs.kotlin.inject.compiler)
+  add("kspIosX64", libs.kotlin.inject.compiler)
+  add("kspIosArm64", libs.kotlin.inject.compiler)
+  add("kspIosSimulatorArm64", libs.kotlin.inject.compiler)
 }

@@ -14,11 +14,12 @@ androidx-test-junit = "1.2.1"
 compose-plugin = "1.7.0-beta01"
 junit = "4.13.2"
 kotlin = "2.0.20"
+kotlinInject = "0.7.1"
+ksp = "2.0.20-1.0.24"
 kotlinx-coroutines = "1.8.1"
 kotlinxDatetime = "0.6.1"
 ktor = "2.3.12"
 logback = "1.5.7"
-koin = "4.0.0-RC1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -40,16 +41,13 @@ ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "kto
 ktor-server-netty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
 ktor-server-tests = { module = "io.ktor:ktor-server-tests-jvm", version.ref = "ktor" }
 
-koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koin" }
-koin-core = { group = "io.insert-koin", name = "koin-core" }
-koin-android = { group = "io.insert-koin", name = "koin-android" }
-koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose" }
-koin-compose-navigation = { group = "io.insert-koin", name = "koin-compose-navigation" }
-koin-compose = { group = "io.insert-koin", name = "koin-compose" }
+kotlin-inject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlinInject" }
+kotlin-inject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlinInject" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
