@@ -48,6 +48,7 @@ kotlin {
   sourceSets {
     commonMain.dependencies {
       implementation(libs.kotlin.inject.runtime)
+      api(libs.kotlinx.coroutines.core)
       api(libs.kotlinx.datetime)
     }
   }
