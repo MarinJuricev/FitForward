@@ -10,8 +10,6 @@ import home.model.DayInfo
 @Composable
 @Preview
 private fun WeekSelectorPreview() {
-
-
     val days = remember {
         mutableStateListOf(
             DayInfo(name = "Mon", "1"),

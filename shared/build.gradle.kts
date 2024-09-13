@@ -66,6 +66,9 @@ android {
   }
 }
 
+ksp {
+  arg("me.tatarka.inject.generateCompanionExtensions", "true")
+}
 // Taken from:
 // https://github.com/evant/kotlin-inject-samples/blob/main/multiplatform/greeter/shared/build.gradle.kts
 // Tivi has a more interesting approach where it loops over the targets and add the KotlinInject compiler

@@ -27,93 +27,100 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import core.DateProvider
 import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen() {
-  val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-  val calendarPresenter = remember {
-    CalendarPresenter(
-      dateProvider = {
-        Clock.System.now()
-          .toLocalDateTime(TimeZone.currentSystemDefault())
-          .date
-      }
-    )
-  }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-  Scaffold(
-    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-    bottomBar = {
-      var selectedItem by remember { mutableStateOf(bottomItems.first()) }
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        bottomBar = {
+            var selectedItem by remember { mutableStateOf(bottomItems.first()) }
 
-      BottomAppBar {
-        bottomItems.forEach { bottomItem ->
-          NavigationBarItem(
-            selected = selectedItem == bottomItem,
-            onClick = {
-              selectedItem = bottomItem
-            },
-            icon = {
-              Icon(
-                imageVector = bottomItem.image,
-                contentDescription = bottomItem.contentDescription
-              )
+            BottomAppBar {
+                bottomItems.forEach { bottomItem ->
+                    NavigationBarItem(
+                        selected = selectedItem == bottomItem,
+                        onClick = {
+                            selectedItem = bottomItem
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = bottomItem.image,
+                                contentDescription = bottomItem.contentDescription
+                            )
+                        }
+                    )
+                }
             }
-          )
-        }
-      }
-    },
-    topBar = {
-      MediumTopAppBar(
-        title = { Text("Date") },
-        scrollBehavior = scrollBehavior,
-        actions = {
-          Icon(imageVector = Icons.Rounded.MoreVert, "More")
-        }
-      )
-    },
-    content = { paddingValues ->
-      val dates by calendarPresenter.availableDates.collectAsStateWithLifecycle()
+        },
+        topBar = {
+            MediumTopAppBar(
+                title = { Text("Date") },
+                scrollBehavior = scrollBehavior,
+                actions = {
+                    Icon(imageVector = Icons.Rounded.MoreVert, "More")
+                }
+            )
+        },
+        content = { paddingValues ->
 
 
-      Column(
-        modifier = Modifier
-          .padding(paddingValues)
-          .fillMaxSize()
-      ) {
-        val pagerState = rememberPagerState(
-          initialPage = 1,
-          pageCount = { 3 }
+            Column(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+            ) {
+                FitCalendarPicker()
+            }
+        }
+    )
+}
+
+
+@Composable
+fun FitCalendarPicker(
+    modifier: Modifier = Modifier
+) {
+    val calendarPresenter = remember {
+        CalendarPresenter(
+            dateProvider = {
+                Clock.System.now()
+                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                    .date
+            }
         )
+    }
+    val dates by calendarPresenter.availableDates.collectAsStateWithLifecycle()
+    val pagerState = rememberPagerState(
+        initialPage = 1,
+        pageCount = { 3 }
+    )
 
-        HorizontalPager(
-          state = pagerState,
-          modifier = Modifier.fillMaxSize(),
-        ) {
-          when (it) {
+    HorizontalPager(
+        modifier = modifier.fillMaxSize(),
+        state = pagerState,
+    ) {
+        when (it) {
             0 -> Text(dates.first().value)
             1 -> Text(dates.toString())
             2 -> Text("3")
-          }
         }
-      }
     }
-  )
+
 }
 
 private val bottomItems = listOf(
-  BottomAppItem(image = Icons.Rounded.FitnessCenter, "Workout Screen"),
-  BottomAppItem(image = Icons.Rounded.BarChart, "Statistics"),
-  BottomAppItem(image = Icons.Rounded.People, "Login/Me"),
+    BottomAppItem(image = Icons.Rounded.FitnessCenter, "Workout Screen"),
+    BottomAppItem(image = Icons.Rounded.BarChart, "Statistics"),
+    BottomAppItem(image = Icons.Rounded.People, "Login/Me"),
 )
 
 data class BottomAppItem(
-  val image: ImageVector,
-  val contentDescription: String,
+    val image: ImageVector,
+    val contentDescription: String,
 )

@@ -1,15 +1,25 @@
 package core.di
 
 import core.AppCoroutineDispatchers
+import core.DateProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import me.tatarka.inject.annotations.Component
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import me.tatarka.inject.annotations.Provides
 
 expect val ioDispatcher: CoroutineDispatcher
 
-@Component
 interface SharedApplicationComponent {
+
+    @ApplicationScope
+    @Provides
+    fun provideDateProvider(): DateProvider = DateProvider {
+        Clock.System.now()
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+            .date
+    }
 
     @ApplicationScope
     @Provides
