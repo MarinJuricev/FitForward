@@ -22,11 +22,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.cash.molecule.RecompositionMode
+import app.cash.molecule.launchMolecule
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -86,7 +88,7 @@ fun HomeScreen() {
 fun FitCalendarPicker(
     modifier: Modifier = Modifier
 ) {
-    val calendarPresenter = remember {
+    val dates = rememberCoroutineScope().launchMolecule(mode = RecompositionMode.ContextClock) {
         CalendarPresenter(
             dateProvider = {
                 Clock.System.now()
@@ -95,7 +97,6 @@ fun FitCalendarPicker(
             }
         )
     }
-    val dates by calendarPresenter.availableDates.collectAsStateWithLifecycle()
     val pagerState = rememberPagerState(
         initialPage = 1,
         pageCount = { 3 }
@@ -106,8 +107,8 @@ fun FitCalendarPicker(
         state = pagerState,
     ) {
         when (it) {
-            0 -> Text(dates.first().value)
-            1 -> Text(dates.toString())
+            0 -> Text(dates.value.first().value)
+            1 -> Text(dates.value.toString())
             2 -> Text("3")
         }
     }

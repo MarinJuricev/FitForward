@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.androidLibrary)
+  alias(libs.plugins.compose.compiler)
   alias(libs.plugins.ksp)
 }
 
@@ -48,6 +49,8 @@ kotlin {
   sourceSets {
     commonMain.dependencies {
       implementation(libs.kotlin.inject.runtime)
+      implementation(libs.circuit.retained)
+      api(libs.molecule.runtime)
       api(libs.kotlinx.coroutines.core)
       api(libs.kotlinx.datetime)
     }

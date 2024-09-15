@@ -19,9 +19,9 @@ import home.model.DayInfo
 
 @Composable
 fun WeekSelector(
-  days: List<DayInfo>,
-  onDayClick: (DayInfo) -> Unit,
-  modifier: Modifier = Modifier
+    days: List<DayInfo>,
+    onDayClick: (DayInfo) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier.background(Color.Red),
