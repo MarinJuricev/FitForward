@@ -50,7 +50,8 @@ kotlin {
     commonMain.dependencies {
       implementation(libs.kotlin.inject.runtime)
       implementation(libs.circuit.retained)
-      api(libs.molecule.runtime)
+      implementation(libs.lifecycle.viewmodel.compose)
+      implementation(libs.molecule.runtime)
       api(libs.kotlinx.coroutines.core)
       api(libs.kotlinx.datetime)
     }
