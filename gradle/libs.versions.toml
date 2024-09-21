@@ -8,7 +8,7 @@ androidx-appcompat = "1.7.0"
 androidx-constraintlayout = "2.1.4"
 androidx-core-ktx = "1.13.1"
 androidx-espresso-core = "3.6.1"
-androidx-lifecycle = "2.8.1"
+androidx-lifecycle = "2.8.2"
 androidx-material = "1.12.0"
 androidx-test-junit = "1.2.1"
 circuitRetained = "0.23.1"
@@ -16,14 +16,15 @@ compose-plugin = "1.7.0-beta01"
 junit = "4.13.2"
 kotlin = "2.0.20"
 kotlinInject = "0.7.1"
+kotlinxSerializationJson = "1.7.2"
 ksp = "2.0.20-1.0.24"
 kotlinx-coroutines = "1.8.1"
 kotlinxDatetime = "0.6.1"
 ktor = "2.3.12"
-lifecycleViewmodelCompose = "2.8.0"
+lifecycleViewmodelCompose = "2.8.2"
 logback = "1.5.7"
 moleculeRuntime = "2.0.0"
-navigationCompose = "2.7.0-alpha07"
+navigationCompose = "2.8.0-alpha10"
 
 [libraries]
 circuit-retained = { module = "com.slack.circuit:circuit-retained", version.ref = "circuitRetained" }
@@ -42,6 +43,7 @@ androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
@@ -62,3 +64,4 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

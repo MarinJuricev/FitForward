@@ -8,6 +8,7 @@ plugins {
   alias(libs.plugins.androidLibrary)
   alias(libs.plugins.compose.compiler)
   alias(libs.plugins.ksp)
+  alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -52,6 +53,7 @@ kotlin {
       implementation(libs.circuit.retained)
       implementation(libs.lifecycle.viewmodel.compose)
       implementation(libs.molecule.runtime)
+      api(libs.kotlinx.serialization.json)
       api(libs.kotlinx.coroutines.core)
       api(libs.kotlinx.datetime)
     }

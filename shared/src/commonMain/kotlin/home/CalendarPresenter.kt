@@ -7,9 +7,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import app.cash.molecule.RecompositionMode
+import app.cash.molecule.launchMolecule
 import com.slack.circuit.retained.rememberRetained
 import core.DateProvider
 import home.model.DayInfo
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
@@ -20,6 +24,16 @@ data class CalendarState(
     val onDayClick: (DayInfo) -> Unit,
 )
 
+class CalendarPresenterFactory(
+    private val coroutineScope: CoroutineScope,
+    private val dateProvider: DateProvider,
+) {
+    fun create(): Flow<CalendarState> =
+        coroutineScope.launchMolecule(RecompositionMode.ContextClock) {
+            CalendarPresenter(dateProvider)
+        }
+}
+
 @Composable
 fun CalendarPresenter(
     dateProvider: DateProvider,
@@ -29,7 +43,8 @@ fun CalendarPresenter(
     }
     var availableDates by rememberRetained {
         mutableStateOf(
-            generateDataSet(dateProvider.generate()))
+            generateDataSet(dateProvider.generate())
+        )
     }
 
     return CalendarState(

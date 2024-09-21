@@ -1,11 +1,9 @@
 @file:OptIn(
-    ExperimentalFoundationApi::class, ExperimentalLayoutApi::class,
-    ExperimentalUuidApi::class
+    ExperimentalLayoutApi::class, ExperimentalUuidApi::class
 )
 
 package home
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -33,20 +31,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import app.cash.molecule.RecompositionMode
-import app.cash.molecule.launchMolecule
 import home.components.WeekSelector
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.serialization.Serializable
 import kotlin.uuid.ExperimentalUuidApi
+
+@Serializable
+object HomeRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,20 +81,6 @@ fun HomeScreen() {
             )
         },
         content = { paddingValues ->
-            val coroutineScope = rememberCoroutineScope()
-
-            // Launch the molecule only once and remember the StateFlow
-            val calendarStateFlow = remember {
-                coroutineScope.launchMolecule(mode = RecompositionMode.ContextClock) {
-                    CalendarPresenter(
-                        dateProvider = {
-                            Clock.System.now()
-                                .toLocalDateTime(TimeZone.currentSystemDefault())
-                                .date
-                        }
-                    )
-                }
-            }
 
             val calendarState by calendarStateFlow.collectAsState()
             Column(
