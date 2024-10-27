@@ -1,9 +1,11 @@
 package home
 
 import androidx.lifecycle.ViewModel
+import me.tatarka.inject.annotations.Inject
 
+@Inject
 class HomeViewModel(
-  private val calendarPresenter: CalendarPresenter,
+    private val calendarPresenterFactory: CalendarPresenterFactory
 ) : ViewModel() {
 
 }

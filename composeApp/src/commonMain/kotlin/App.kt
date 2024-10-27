@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import design.FitForwardTheme
+import home.CalendarPresenterFactory
 import home.HomeRoute
 import home.HomeScreen
 
@@ -19,7 +20,11 @@ fun App(
             startDestination = HomeRoute
         ) {
             composable<HomeRoute> {
-                HomeScreen()
+                val calendarPresenterFactory =  CalendarPresenterFactory()
+
+                HomeScreen(
+
+                )
             }
         }
     }

@@ -1,15 +1,13 @@
 package home
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
-import com.slack.circuit.retained.rememberRetained
 import core.DateProvider
 import home.model.DayInfo
 import kotlinx.coroutines.CoroutineScope
@@ -28,23 +26,26 @@ class CalendarPresenterFactory(
     private val coroutineScope: CoroutineScope,
     private val dateProvider: DateProvider,
 ) {
-    fun create(): Flow<CalendarState> =
-        coroutineScope.launchMolecule(RecompositionMode.ContextClock) {
+    fun state(): Flow<CalendarState> = coroutineScope
+        .launchMolecule(RecompositionMode.ContextClock) {
             CalendarPresenter(dateProvider)
         }
+
+    @Composable
+    fun Content(
+        calendarState: CalendarState,
+        modifier: Modifier = Modifier,
+    ) {
+
+    }
 }
 
 @Composable
 fun CalendarPresenter(
     dateProvider: DateProvider,
 ): CalendarState {
-    LaunchedEffect(Unit) {
-        print("CalendarPresenter")
-    }
-    var availableDates by rememberRetained {
-        mutableStateOf(
-            generateDataSet(dateProvider.generate())
-        )
+    var availableDates by remember {
+        mutableStateOf(generateDataSet(dateProvider.generate()))
     }
 
     return CalendarState(

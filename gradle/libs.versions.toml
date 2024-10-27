@@ -11,7 +11,6 @@ androidx-espresso-core = "3.6.1"
 androidx-lifecycle = "2.8.2"
 androidx-material = "1.12.0"
 androidx-test-junit = "1.2.1"
-circuitRetained = "0.23.1"
 compose-plugin = "1.7.0-beta01"
 junit = "4.13.2"
 kotlin = "2.0.20"
@@ -27,7 +26,6 @@ moleculeRuntime = "2.0.0"
 navigationCompose = "2.8.0-alpha10"
 
 [libraries]
-circuit-retained = { module = "com.slack.circuit:circuit-retained", version.ref = "circuitRetained" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

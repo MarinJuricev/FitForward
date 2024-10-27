@@ -50,7 +50,6 @@ kotlin {
   sourceSets {
     commonMain.dependencies {
       implementation(libs.kotlin.inject.runtime)
-      implementation(libs.circuit.retained)
       implementation(libs.lifecycle.viewmodel.compose)
       implementation(libs.molecule.runtime)
       api(libs.kotlinx.serialization.json)
