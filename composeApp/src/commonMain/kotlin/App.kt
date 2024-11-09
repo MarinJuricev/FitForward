@@ -1,14 +1,15 @@
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import design.FitForwardTheme
-import home.CalendarPresenterFactory
 import home.HomeRoute
 import home.HomeScreen
+import home.HomeViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun App(
@@ -20,10 +21,11 @@ fun App(
             startDestination = HomeRoute
         ) {
             composable<HomeRoute> {
-                val calendarPresenterFactory =  CalendarPresenterFactory()
+                val homeViewModel = koinViewModel<HomeViewModel>()
+                val calendarState by homeViewModel.calendarState.collectAsState()
 
                 HomeScreen(
-
+                    calendarState = calendarState,
                 )
             }
         }

@@ -36,15 +36,16 @@ object HomeRoute
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    calendarState: CalendarState,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         bottomBar = {
-            var selectedItem by remember { mutableStateOf(bottomItems.first()) }
-
             BottomAppBar {
+                var selectedItem by remember { mutableStateOf(bottomItems.first()) }
+
                 bottomItems.forEach { bottomItem ->
                     NavigationBarItem(
                         selected = selectedItem == bottomItem,
@@ -87,7 +88,6 @@ fun FitCalendarPicker(
     state: CalendarState,
     modifier: Modifier = Modifier
 ) {
-
     val pagerState = rememberPagerState(
         initialPage = 1,
         pageCount = { 3 }
@@ -100,6 +100,7 @@ fun FitCalendarPicker(
         val startIndex = pageIndex * 7
         val endIndex = minOf(startIndex + 7, state.days.size)
         val daysForPage = state.days.subList(startIndex, endIndex)
+
         WeekSelector(
             days = daysForPage,
             onDayClick = state.onDayClick

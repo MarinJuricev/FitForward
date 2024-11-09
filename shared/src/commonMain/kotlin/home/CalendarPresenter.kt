@@ -5,13 +5,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import core.DateProvider
 import home.model.DayInfo
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
@@ -23,25 +22,19 @@ data class CalendarState(
 )
 
 class CalendarPresenterFactory(
-    private val coroutineScope: CoroutineScope,
     private val dateProvider: DateProvider,
 ) {
-    fun state(): Flow<CalendarState> = coroutineScope
-        .launchMolecule(RecompositionMode.ContextClock) {
+
+    fun create(
+        coroutineScope: CoroutineScope
+    ): StateFlow<CalendarState> = coroutineScope
+        .launchMolecule(RecompositionMode.Immediate) {
             CalendarPresenter(dateProvider)
         }
-
-    @Composable
-    fun Content(
-        calendarState: CalendarState,
-        modifier: Modifier = Modifier,
-    ) {
-
-    }
 }
 
 @Composable
-fun CalendarPresenter(
+internal fun CalendarPresenter(
     dateProvider: DateProvider,
 ): CalendarState {
     var availableDates by remember {
