@@ -6,19 +6,28 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import home.components.WeekSelector
 import home.model.DayInfo
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
 
 @Composable
 @Preview
 private fun WeekSelectorPreview() {
+    val date = Clock.System.now().toLocalDateTime(TimeZone.UTC).date
+
     val days = remember {
         mutableStateListOf(
-            DayInfo(name = "Mon", "1"),
-            DayInfo(name = "Tue", "2"),
-            DayInfo(name = "", "3", isSelected = true),
-            DayInfo(name = "Thur", "4"),
-            DayInfo(name = "Fri", "5"),
-            DayInfo(name = "Sun", "6"),
-            DayInfo(name = "Sat", "7"),
+            DayInfo(name = "Mon", value = "1", date = date),
+            DayInfo(name = "Tue", value = "2", date = date.plus(DatePeriod(days = 1))),
+            DayInfo(name = "Wen", value = "3", isSelected = true),
+            DayInfo(name = "Thur",value =  "4"),
+            DayInfo(name = "Fri", value = "5"),
+            DayInfo(name = "Sun", value = "6"),
+            DayInfo(name = "Sat", value = "7"),
         )
     }
 

@@ -1,5 +1,6 @@
 package home.components
 
+import androidx.compose.animation.animateColor
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateInt
@@ -42,10 +43,9 @@ fun WeekSelector(
             val fontSize by selectedTransition.animateInt { isSelected ->
                 if (isSelected) 18 else 14
             }
-            val dayValueBackground by animateColorAsState(
-                targetValue = if (day.isSelected) MaterialTheme.colorScheme.secondary else Color.Transparent,
-                animationSpec = TweenSpec(250)
-            )
+            val dayValueBackground by selectedTransition.animateColor { isSelected ->
+                if (isSelected) MaterialTheme.colorScheme.inversePrimary else Color.Transparent
+            }
 
             Column(
                 modifier = Modifier
@@ -55,16 +55,17 @@ fun WeekSelector(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
+                Text(text = day.value)
                 Text(
                     text = day.name,
                     fontSize = fontSize.sp,
-                    fontWeight = FontWeight(targetFontWeight)
-                )
-                Text(
-                    text = day.value,
+                    fontWeight = FontWeight(targetFontWeight),
                     modifier = Modifier
-                        .background(color = dayValueBackground)
-                        .padding(2.dp),
+                        .background(
+                            color = dayValueBackground,
+                            shape = MaterialTheme.shapes.extraSmall,
+                        )
+                        .padding(vertical = 2.dp, horizontal = 8.dp),
                 )
             }
         }

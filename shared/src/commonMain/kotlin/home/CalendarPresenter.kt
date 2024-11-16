@@ -65,6 +65,7 @@ private fun generateWeekDays(
     val date = startDate.plus(offset, DateTimeUnit.DAY)
 
     DayInfo(
+        date = date,
         name = date.dayOfMonth.toString(),
         value = date.dayOfWeek.name.take(3).lowercase()
             .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() },
