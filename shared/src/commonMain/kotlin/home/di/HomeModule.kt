@@ -1,6 +1,6 @@
 package home.di
 
-import home.CalendarPresenterFactory
+import home.presenter.CalendarPresenterFactory
 import home.HomeViewModel
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModelOf

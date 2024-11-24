@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import home.components.WeekSelector
+import home.presenter.CalendarState
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -37,6 +38,7 @@ object HomeRoute
 @Composable
 fun HomeScreen(
     calendarState: CalendarState,
+    selectedDate: String,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
@@ -64,7 +66,7 @@ fun HomeScreen(
         },
         topBar = {
             MediumTopAppBar(
-                title = { Text("Date") },
+                title = { Text(selectedDate) },
                 scrollBehavior = scrollBehavior,
                 actions = {
                     Icon(imageVector = Icons.Rounded.MoreVert, "More")
@@ -78,13 +80,14 @@ fun HomeScreen(
                     .fillMaxSize()
             ) {
                 FitCalendarPicker(calendarState)
+                RoutinePicker(routineState)
             }
         }
     )
 }
 
 @Composable
-fun FitCalendarPicker(
+private fun FitCalendarPicker(
     state: CalendarState,
     modifier: Modifier = Modifier
 ) {
@@ -106,6 +109,14 @@ fun FitCalendarPicker(
             onDayClick = state.onDayClick
         )
     }
+
+}
+
+@Composable
+fun RoutinePicker(
+    routineState: RoutineState,
+    modifier: Modifier = Modifier
+) {
 
 }
 

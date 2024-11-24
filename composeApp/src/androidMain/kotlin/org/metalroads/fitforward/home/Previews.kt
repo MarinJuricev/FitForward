@@ -23,11 +23,16 @@ private fun WeekSelectorPreview() {
         mutableStateListOf(
             DayInfo(name = "Mon", value = "1", date = date),
             DayInfo(name = "Tue", value = "2", date = date.plus(DatePeriod(days = 1))),
-            DayInfo(name = "Wen", value = "3", isSelected = true),
-            DayInfo(name = "Thur",value =  "4"),
-            DayInfo(name = "Fri", value = "5"),
-            DayInfo(name = "Sun", value = "6"),
-            DayInfo(name = "Sat", value = "7"),
+            DayInfo(
+                name = "Wen",
+                value = "3",
+                date = date.plus(DatePeriod(days = 1)),
+                isSelected = true
+            ),
+            DayInfo(name = "Thur", value = "4", date = date.plus(DatePeriod(days = 2))),
+            DayInfo(name = "Fri", value = "5", date = date.plus(DatePeriod(days = 3))),
+            DayInfo(name = "Sun", value = "6", date = date.plus(DatePeriod(days = 4))),
+            DayInfo(name = "Sat", value = "7", date = date.plus(DatePeriod(days = 5))),
         )
     }
 

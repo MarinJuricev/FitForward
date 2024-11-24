@@ -22,9 +22,12 @@ fun App(
         ) {
             composable<HomeRoute> {
                 val homeViewModel = koinViewModel<HomeViewModel>()
+
                 val calendarState by homeViewModel.calendarState.collectAsState()
+                val selectedDate by homeViewModel.selectedDate.collectAsState()
 
                 HomeScreen(
+                    selectedDate = selectedDate,
                     calendarState = calendarState,
                 )
             }
