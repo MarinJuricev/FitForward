@@ -20,7 +20,7 @@ data class RoutineInfo(
     val isSelected: Boolean,
 )
 
-class RoutinePickerPresenter {
+class RoutinePickerPresenterFactory {
 
     fun create(
         coroutineScope: CoroutineScope
