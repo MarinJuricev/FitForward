@@ -25,10 +25,12 @@ fun App(
 
                 val calendarState by homeViewModel.calendarState.collectAsState()
                 val selectedDate by homeViewModel.selectedDate.collectAsState()
+                val routinePickerState by homeViewModel.routinePickerState.collectAsState()
 
                 HomeScreen(
                     selectedDate = selectedDate,
                     calendarState = calendarState,
+                    routinePickerState = routinePickerState,
                 )
             }
         }

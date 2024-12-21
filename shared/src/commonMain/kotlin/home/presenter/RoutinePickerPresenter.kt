@@ -54,5 +54,6 @@ internal fun RoutinePickerPresenter(
 
     return RoutinePickerState(
         routines = availableRoutines.value,
-        onRoutineClick = { it },
+        onRoutineClick = {},
+    )
 }

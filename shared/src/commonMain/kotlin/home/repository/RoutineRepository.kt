@@ -15,7 +15,15 @@ interface RoutineRepository {
 
 class InMemoryRoutineRepository : RoutineRepository {
 
-    private val routines = MutableStateFlow<List<Routine>>(emptyList())
+    val initialRoutine = Routine(
+        id = "1",
+        name = "Back",
+        description = "Pull up for dayz",
+    )
+
+    private val routines = MutableStateFlow<List<Routine>>(
+        listOf(initialRoutine)
+    )
 
     override fun observeRoutines(): Flow<List<Routine>> =
         routines

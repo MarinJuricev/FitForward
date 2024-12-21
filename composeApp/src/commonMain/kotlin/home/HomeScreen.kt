@@ -1,6 +1,7 @@
 package home
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,6 +30,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import home.components.WeekSelector
 import home.presenter.CalendarState
+import home.presenter.RoutinePickerState
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -38,6 +40,7 @@ object HomeRoute
 @Composable
 fun HomeScreen(
     calendarState: CalendarState,
+    routinePickerState: RoutinePickerState,
     selectedDate: String,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -80,7 +83,7 @@ fun HomeScreen(
                     .fillMaxSize()
             ) {
                 FitCalendarPicker(calendarState)
-                RoutinePicker(routineState)
+                RoutinePicker(routinePickerState)
             }
         }
     )
@@ -113,10 +116,15 @@ private fun FitCalendarPicker(
 }
 
 @Composable
-fun RoutinePicker(
-    routineState: RoutineState,
+private fun RoutinePicker(
+    routineState: RoutinePickerState,
     modifier: Modifier = Modifier
 ) {
+    Row(
+        modifier = modifier,
+    ) {
+        Text(routineState.routines.toString())
+    }
 
 }
 
