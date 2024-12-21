@@ -1,12 +1,13 @@
 package home.presenter
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.produceState
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
+import home.repository.RoutineRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 
 data class RoutinePickerState(
     val routines: List<RoutineInfo>,
@@ -20,28 +21,38 @@ data class RoutineInfo(
     val isSelected: Boolean,
 )
 
-class RoutinePickerPresenterFactory {
+class RoutinePickerPresenterFactory(
+    private val routineRepository: RoutineRepository,
+) {
 
     fun create(
         coroutineScope: CoroutineScope
-    ): StateFlow<CalendarState> = coroutineScope
+    ): StateFlow<RoutinePickerState> = coroutineScope
         .launchMolecule(RecompositionMode.Immediate) {
-            RoutinePickerPresenter()
+            RoutinePickerPresenter(
+                routineRepository
+            )
         }
 }
 
 @Composable
-internal fun RoutinePickerPresenter(): RoutinePickerState {
-    var availableRoutines by remember {
-        mutableStateOf(generateDataSet())
+internal fun RoutinePickerPresenter(
+    routineRepository: RoutineRepository,
+): RoutinePickerState {
+    var availableRoutines = produceState(emptyList<RoutineInfo>()) {
+        routineRepository.observeRoutines().map {
+            it.map {
+                RoutineInfo(
+                    it.id,
+                    it.name,
+                    it.description,
+                    false,
+                )
+            }
+        }
     }
 
     return RoutinePickerState(
-        routines = availableRoutines,
-        onRoutineClick = { selectedRoutine ->
-            availableRoutines = availableRoutines.map { routine ->
-                routine.copy(isSelected = routine == selectedRoutine)
-            }
-        },
-    )
+        routines = availableRoutines.value,
+        onRoutineClick = { it },
 }
