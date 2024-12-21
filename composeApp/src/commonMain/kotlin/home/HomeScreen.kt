@@ -1,12 +1,8 @@
 package home
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.BarChart
 import androidx.compose.material.icons.rounded.FitnessCenter
@@ -28,7 +24,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import home.components.WeekSelector
+import home.components.FitCalendarPicker
+import home.components.RoutinePicker
 import home.presenter.CalendarState
 import home.presenter.RoutinePickerState
 import kotlinx.serialization.Serializable
@@ -89,44 +86,6 @@ fun HomeScreen(
     )
 }
 
-@Composable
-private fun FitCalendarPicker(
-    state: CalendarState,
-    modifier: Modifier = Modifier
-) {
-    val pagerState = rememberPagerState(
-        initialPage = 1,
-        pageCount = { 3 }
-    )
-
-    HorizontalPager(
-        modifier = modifier.fillMaxWidth(),
-        state = pagerState,
-    ) { pageIndex ->
-        val startIndex = pageIndex * 7
-        val endIndex = minOf(startIndex + 7, state.days.size)
-        val daysForPage = state.days.subList(startIndex, endIndex)
-
-        WeekSelector(
-            days = daysForPage,
-            onDayClick = state.onDayClick
-        )
-    }
-
-}
-
-@Composable
-private fun RoutinePicker(
-    routineState: RoutinePickerState,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier,
-    ) {
-        Text(routineState.routines.toString())
-    }
-
-}
 
 private val bottomItems = listOf(
     BottomAppItem(image = Icons.Rounded.FitnessCenter, "Workout Screen"),
