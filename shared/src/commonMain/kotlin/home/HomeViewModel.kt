@@ -22,5 +22,6 @@ class HomeViewModel(
         .filterNotNull()
         .map(LocalDate::toDayMonthYear)
         .stateIn(viewModelScope, SharingStarted.Lazily, "Date not selected")
+
     val routinePickerState = routinePickerPresenterFactory.create(viewModelScope)
 }
