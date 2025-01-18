@@ -1,11 +1,16 @@
 package design
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 private val LightColors = lightColorScheme(
     primary = md_theme_light_primary,
@@ -87,4 +92,48 @@ fun FitForwardTheme(
         colorScheme = DarkColors,
         content = content
     )
+}
+
+
+@Preview()
+@Composable
+fun FitDesignSystemPreview() {
+    Column {
+        FitTopAppBar(title = "Fit Design System")
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        FitTitleLarge(text = "Hello Fit")
+        FitBodyMedium(text = "This is a body text example.")
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        FitPrimaryButton(
+            onClick = {},
+            text = "Primary Button"
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        FitOutlinedButton(
+            onClick = {},
+            text = "Outlined Button"
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        FitCard {
+            FitBodyMedium(text = "I am inside a FitCard!")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        var textValue = "Input..."
+        FitTextField(
+            value = textValue,
+            onValueChange = { /* handle change */ },
+            label = "Label"
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+    }
 }
