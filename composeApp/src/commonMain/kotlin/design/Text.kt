@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 
 @Composable
-fun FitTitleLarge(
+fun FitTitleLargeText(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onBackground,
@@ -24,7 +24,7 @@ fun FitTitleLarge(
 }
 
 @Composable
-fun FitTitleMedium(
+fun FitTitleMediumText(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onBackground,
@@ -40,7 +40,7 @@ fun FitTitleMedium(
 }
 
 @Composable
-fun FitBodyLarge(
+fun FitBodyLargeText(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onBackground,
@@ -56,7 +56,7 @@ fun FitBodyLarge(
 }
 
 @Composable
-fun FitBodyMedium(
+fun FitBodyMediumText(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onBackground,
@@ -72,7 +72,7 @@ fun FitBodyMedium(
 }
 
 @Composable
-fun FitBodySmall(
+fun FitBodySmallText(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onBackground,

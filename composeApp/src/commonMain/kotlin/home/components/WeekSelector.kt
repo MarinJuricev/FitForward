@@ -55,7 +55,7 @@ fun WeekSelector(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
-                Text(text = day.value)
+                FitNo(text = day.value)
                 Text(
                     text = day.name,
                     fontSize = fontSize.sp,

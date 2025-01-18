@@ -1,9 +1,12 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package design
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -97,14 +100,14 @@ fun FitForwardTheme(
 
 @Preview()
 @Composable
-fun FitDesignSystemPreview() {
+private fun FitDesignSystemPreview() {
     Column {
         FitTopAppBar(title = "Fit Design System")
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        FitTitleLarge(text = "Hello Fit")
-        FitBodyMedium(text = "This is a body text example.")
+        FitTitleLargeText(text = "Hello Fit")
+        FitBodyMediumText(text = "This is a body text example.")
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -121,7 +124,7 @@ fun FitDesignSystemPreview() {
         Spacer(modifier = Modifier.height(16.dp))
 
         FitCard {
-            FitBodyMedium(text = "I am inside a FitCard!")
+            FitBodyMediumText(text = "I am inside a FitCard!")
         }
 
         Spacer(modifier = Modifier.height(16.dp))

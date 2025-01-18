@@ -12,10 +12,8 @@ import androidx.compose.material.icons.rounded.People
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import design.FitTopAppBar
 import home.components.FitCalendarPicker
 import home.components.RoutinePicker
 import home.presenter.CalendarState
@@ -66,8 +65,8 @@ fun HomeScreen(
             }
         },
         topBar = {
-            MediumTopAppBar(
-                title = { Text(selectedDate) },
+            FitTopAppBar(
+                title = selectedDate,
                 scrollBehavior = scrollBehavior,
                 actions = {
                     Icon(imageVector = Icons.Rounded.MoreVert, "More")

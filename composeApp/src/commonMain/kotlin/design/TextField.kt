@@ -17,7 +17,7 @@ fun FitTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier.fillMaxWidth(),
-        label = { if (label != null) FitBodyMedium(text = label) },
+        label = { if (label != null) FitBodyMediumText(text = label) },
     )
 }
 
@@ -32,6 +32,6 @@ fun FitOutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier.fillMaxWidth(),
-        label = { if (label != null) FitBodyMedium(text = label) },
+        label = { if (label != null) FitBodyMediumText(text = label) },
     )
 }

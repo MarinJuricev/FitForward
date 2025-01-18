@@ -33,7 +33,7 @@ fun FitPrimaryButton(
         ),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
     ) {
-        FitBodyMedium(text = text)
+        FitBodyMediumText(text = text)
     }
 }
 
@@ -56,7 +56,7 @@ fun FitSecondaryButton(
         ),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        FitBodyMedium(text = text)
+        FitBodyMediumText(text = text)
     }
 }
 
@@ -73,7 +73,7 @@ fun FitOutlinedButton(
         enabled = enabled,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
     ) {
-        FitBodyMedium(text = text)
+        FitBodyMediumText(text = text)
     }
 }
 
@@ -89,7 +89,7 @@ fun FitTextButton(
         modifier = modifier,
         enabled = enabled
     ) {
-        FitBodyMedium(text = text)
+        FitBodyMediumText(text = text)
     }
 }
 
