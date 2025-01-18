@@ -92,7 +92,7 @@ fun FitForwardTheme(
     }
 
     MaterialTheme(
-        colorScheme = DarkColors,
+        colorScheme = colors,
         content = content
     )
 }
@@ -113,12 +113,16 @@ private fun FitDesignSystemPreview() {
 
         FitPrimaryButton(
             onClick = {},
-            text = "Primary Button"
+            content = {
+                FitBodyMediumText(text = "Primary Button")
+            },
         )
         Spacer(modifier = Modifier.height(8.dp))
         FitOutlinedButton(
             onClick = {},
-            text = "Outlined Button"
+            content = {
+                FitBodyMediumText(text = "Outlined Button")
+            },
         )
 
         Spacer(modifier = Modifier.height(16.dp))

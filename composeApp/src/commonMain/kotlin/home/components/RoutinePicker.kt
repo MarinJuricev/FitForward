@@ -20,6 +20,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import design.FitCard
+import design.FitOutlinedButton
 import home.presenter.RoutinePickerState
 import kotlinx.coroutines.launch
 import kotlin.contracts.contract
@@ -38,18 +40,21 @@ fun RoutinePicker(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Row(
-            modifier = Modifier
-                .weight(0.7f),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Text("Select a routine")
-            Icon(
-                imageVector = Icons.Filled.ArrowDropDown,
-                contentDescription = null,
-            )
+        FitCard {
+            Row(
+                modifier = Modifier
+                    .weight(0.7f),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text("Select a routine")
+                Icon(
+                    imageVector = Icons.Filled.ArrowDropDown,
+                    contentDescription = null,
+                )
+            }
+
         }
-        Button(
+        FitOutlinedButton (
             modifier = Modifier.weight(0.3f),
             onClick = {
                 scope.launch { showBottomSheet = true }

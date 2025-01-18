@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.unit.dp
 import design.FitTopAppBar
 import home.components.FitCalendarPicker
 import home.components.RoutinePicker
@@ -81,7 +82,9 @@ fun HomeScreen(
             ) {
                 FitCalendarPicker(calendarState)
                 RoutinePicker(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
                     routineState = routinePickerState,
                 )
             }
