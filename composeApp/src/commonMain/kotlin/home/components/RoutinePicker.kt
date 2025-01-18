@@ -2,10 +2,11 @@ package home.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -18,13 +19,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.unit.dp
 import design.FitCard
 import design.FitOutlinedButton
 import home.presenter.RoutinePickerState
 import kotlinx.coroutines.launch
-import kotlin.contracts.contract
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,11 +42,15 @@ fun RoutinePicker(
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        FitCard {
+        FitCard(
+            modifier = Modifier
+                .weight(0.7f)
+                .padding(end = 16.dp),
+        ) {
             Row(
-                modifier = Modifier
-                    .weight(0.7f),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text("Select a routine")
@@ -54,7 +61,7 @@ fun RoutinePicker(
             }
 
         }
-        FitOutlinedButton (
+        FitOutlinedButton(
             modifier = Modifier.weight(0.3f),
             onClick = {
                 scope.launch { showBottomSheet = true }

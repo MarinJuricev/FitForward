@@ -84,7 +84,7 @@ fun HomeScreen(
                 RoutinePicker(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp),
+                        .padding(vertical = 8.dp, horizontal = 12.dp),
                     routineState = routinePickerState,
                 )
             }
