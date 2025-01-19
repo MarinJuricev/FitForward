@@ -127,8 +127,12 @@ private fun FitDesignSystemPreview() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        FitCard {
-            FitBodyMediumText(text = "I am inside a FitCard!")
+        FitCard(
+            onClick = {}
+        ) {
+            FitBodyMediumText(
+                text = "I am inside a FitCard!"
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))

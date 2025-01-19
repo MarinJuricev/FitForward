@@ -22,14 +22,6 @@ fun FitTopAppBar(
         title = { FitTitleLargeText(text = title) },
         scrollBehavior = scrollBehavior,
         actions = actions,
-//        navigationIcon = {
-//            actions()
-//            onNavigationClick?.let { clickHandler ->
-//                IconButton(onClick = clickHandler) {
-//                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-//                }
-//            }
-//        },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.surface,
             titleContentColor = MaterialTheme.colorScheme.onSurface

@@ -18,7 +18,11 @@ class InMemoryRoutineRepository : RoutineRepository {
     val initialRoutine = Routine(
         id = "1",
         name = "Back",
-        description = "Pull up for dayz",
+        exercises = listOf(
+            Exercise(id = "1", name = "Deadlift"),
+            Exercise(id = "2", name = "Pull-up"),
+            Exercise(id = "3", name = "Bent-over row"),
+        )
     )
 
     private val routines = MutableStateFlow<List<Routine>>(
@@ -40,5 +44,10 @@ class InMemoryRoutineRepository : RoutineRepository {
 data class Routine(
     val id: String,
     val name: String,
-    val description: String,
+    val exercises: List<Exercise>,
+)
+
+data class Exercise(
+    val id: String,
+    val name: String
 )

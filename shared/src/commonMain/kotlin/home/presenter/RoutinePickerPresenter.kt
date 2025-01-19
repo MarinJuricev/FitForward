@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.produceState
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
+import home.repository.Exercise
 import home.repository.Routine
 import home.repository.RoutineRepository
 import kotlinx.coroutines.CoroutineScope
@@ -11,25 +12,32 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 
+sealed interface RoutinePickerEvent {
+    data class RoutineSelected(val routine: RoutineInfo) : RoutinePickerEvent
+    data object NavigateToRoutines : RoutinePickerEvent
+}
+
 fun Routine.toRoutineInfo(
     isSelected: Boolean = false,
 ) = RoutineInfo(
     id = id,
     name = name,
-    description = description,
+    exercises = exercises,
+    description = "${exercises.count()} exercises",
     isSelected = isSelected,
 )
 
 data class RoutinePickerState(
     val routines: List<RoutineInfo>,
-    val onRoutineClick: (RoutineInfo) -> Unit,
+    val onRoutineEvent: (RoutinePickerEvent) -> Unit,
 )
 
 data class RoutineInfo(
     val id: String,
     val name: String,
-    val description: String,
     val isSelected: Boolean,
+    val description: String,
+    val exercises: List<Exercise>,
 )
 
 class RoutinePickerPresenterFactory(
@@ -54,10 +62,20 @@ internal fun RoutinePickerPresenter(
             .observeRoutines()
             .map { routine -> routine.map(Routine::toRoutineInfo) }
             .collectLatest { value = it }
-    }
+    }.value
 
     return RoutinePickerState(
-        routines = availableRoutines.value,
-        onRoutineClick = {},
+        routines = availableRoutines,
+        onRoutineEvent = {
+            when (it) {
+                is RoutinePickerEvent.RoutineSelected -> {
+
+                }
+
+                is RoutinePickerEvent.NavigateToRoutines -> {
+
+                }
+            }
+        }
     )
 }

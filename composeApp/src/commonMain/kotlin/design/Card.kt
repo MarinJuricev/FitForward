@@ -14,10 +14,12 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun FitCard(
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
     content: @Composable () -> Unit
 ) {
     Card(
         modifier = modifier,
+        onClick = onClick,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface
