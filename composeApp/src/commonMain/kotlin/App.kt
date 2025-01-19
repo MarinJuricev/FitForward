@@ -1,10 +1,6 @@
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.BarChart
-import androidx.compose.material.icons.rounded.FitnessCenter
-import androidx.compose.material.icons.rounded.People
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
@@ -18,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -28,9 +23,10 @@ import design.FitForwardTheme
 import home.HomeRoute
 import home.HomeScreen
 import home.HomeViewModel
+import navigation.bottomItems
 import org.koin.compose.viewmodel.koinViewModel
-import profile.ProfileRoute
-import statistics.StatisticsRoute
+import profile.ProfileScreen
+import statistics.StatisticsScreen
 
 @Composable
 fun App(
@@ -91,7 +87,7 @@ fun App(
                     )
                 }
 
-                composable<StatisticsRoute> {
+                composable<StatisticsScreen> {
                     Box(
                         modifier = Modifier.fillMaxSize()
                     ) {
@@ -102,7 +98,7 @@ fun App(
                     }
                 }
 
-                composable<ProfileRoute> {
+                composable<ProfileScreen> {
                     Box(
                         modifier = Modifier.fillMaxSize()
                     ) {
@@ -116,17 +112,3 @@ fun App(
         }
     }
 }
-
-private val bottomItems = listOf(
-    BottomAppItem(image = Icons.Rounded.FitnessCenter, HomeRoute, "Workout Screen"),
-    BottomAppItem(image = Icons.Rounded.BarChart, StatisticsRoute, "Statistics"),
-    BottomAppItem(image = Icons.Rounded.People, ProfileRoute, "Login/Me"),
-)
-
-data class BottomAppItem(
-    val image: ImageVector,
-    val route: Route,
-    val contentDescription: String,
-)
-
-interface Route

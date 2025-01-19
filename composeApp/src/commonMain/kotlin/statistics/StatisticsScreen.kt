@@ -1,7 +1,7 @@
 package statistics
 
-import Route
 import kotlinx.serialization.Serializable
+import navigation.Route
 
 @Serializable
-object StatisticsRoute : Route
+object StatisticsScreen : Route

@@ -1,7 +1,7 @@
 package profile
 
-import Route
 import kotlinx.serialization.Serializable
+import navigation.Route
 
 @Serializable
-object ProfileRoute : Route
+object ProfileScreen : Route
