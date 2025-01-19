@@ -1,5 +1,6 @@
 package home.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -64,7 +66,9 @@ fun RoutinePicker(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text("Select a routine")
+                FitBodyMediumText(
+                    routineState.selectedRoutine?.name ?: "Select a routine"
+                )
                 Icon(
                     imageVector = Icons.Filled.ArrowDropDown,
                     contentDescription = null,
@@ -95,6 +99,7 @@ fun RoutinePicker(
                 items(routineState.routines, key = { it.id }) { routine ->
                     RoutineItem(
                         routine = routine,
+                        selectedRoutine = routineState.selectedRoutine,
                         onClick = {
                             routineState.onRoutineEvent(RoutineSelected(routine))
                             scope
@@ -118,23 +123,35 @@ fun RoutinePicker(
 @Composable
 private fun RoutineItem(
     routine: RoutineInfo,
+    selectedRoutine: RoutineInfo?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
+    Row(
         modifier = modifier
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 4.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        FitBodyMediumText(
-            text = routine.name,
-            modifier = Modifier.fillMaxWidth(),
-        )
-        FitBodySmallText(
-            text = routine.description,
-            modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        AnimatedVisibility(routine == selectedRoutine) {
+            Icon(
+                imageVector = Icons.Filled.Check,
+                contentDescription = null,
+            )
+        }
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            FitBodyMediumText(
+                text = routine.name,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            FitBodySmallText(
+                text = routine.description,
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
