@@ -1,5 +1,6 @@
 package home
 
+import Route
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,7 +33,7 @@ import home.presenter.RoutinePickerState
 import kotlinx.serialization.Serializable
 
 @Serializable
-object HomeRoute
+object HomeRoute: Route
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,26 +46,6 @@ fun HomeScreen(
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        bottomBar = {
-            BottomAppBar {
-                var selectedItem by remember { mutableStateOf(bottomItems.first()) }
-
-                bottomItems.forEach { bottomItem ->
-                    NavigationBarItem(
-                        selected = selectedItem == bottomItem,
-                        onClick = {
-                            selectedItem = bottomItem
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = bottomItem.image,
-                                contentDescription = bottomItem.contentDescription
-                            )
-                        }
-                    )
-                }
-            }
-        },
         topBar = {
             FitTopAppBar(
                 title = selectedDate,
@@ -92,14 +73,3 @@ fun HomeScreen(
     )
 }
 
-
-private val bottomItems = listOf(
-    BottomAppItem(image = Icons.Rounded.FitnessCenter, "Workout Screen"),
-    BottomAppItem(image = Icons.Rounded.BarChart, "Statistics"),
-    BottomAppItem(image = Icons.Rounded.People, "Login/Me"),
-)
-
-data class BottomAppItem(
-    val image: ImageVector,
-    val contentDescription: String,
-)
