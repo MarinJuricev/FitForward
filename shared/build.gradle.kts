@@ -1,7 +1,6 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -9,23 +8,25 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.sqlDelight)
 }
 
 kotlin {
     @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser {
-            val projectDirPath = project.projectDir.path
-            commonWebpackConfig {
-                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    static = (static ?: mutableListOf()).apply {
-                        // Serve sources to debug inside browser
-                        add(projectDirPath)
-                    }
-                }
-            }
-        }
-    }
+//    SqlDelight does not support WASM ye, revisit WASM at a later time
+//    wasmJs {
+//        browser {
+//            val projectDirPath = project.projectDir.path
+//            commonWebpackConfig {
+//                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+//                    static = (static ?: mutableListOf()).apply {
+//                        // Serve sources to debug inside browser
+//                        add(projectDirPath)
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
@@ -56,9 +57,19 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.molecule.runtime)
 
+            implementation(libs.sqldelight.coroutines)
+
             api(libs.kotlinx.serialization.json)
             api(libs.kotlinx.coroutines.core)
             api(libs.kotlinx.datetime)
+        }
+
+        androidMain.dependencies {
+            implementation(libs.sqldelight.android)
+        }
+
+        nativeMain.dependencies {
+            implementation(libs.sqldelight.native)
         }
     }
 }
@@ -75,22 +86,21 @@ android {
     }
 }
 
-//ksp {
-//    arg("me.tatarka.inject.generateCompanionExtensions", "true")
-//}
-// Taken from:
-// https://github.com/evant/kotlin-inject-samples/blob/main/multiplatform/greeter/shared/build.gradle.kts
-// Tivi has a more interesting approach where it loops over the targets and add the KotlinInject compiler
-// to each one. This is a more manual approach which is okay for the time being:
+sqldelight {
+    databases {
+        create("Database") {
+            // package name used for the database class
+            packageName.set("com.fitforward.data")
+            // generate suspending query methods with asynchronous drivers
+            generateAsync.set(true)
 
-// TODO: Explore the Tivi approach with the Gradle Convention Plugin
-// https://github.dev/chrisbanes/tivi/blob/26510df448c7a5b2c16561af05a0935fbbb0b9a1/gradle/build-logic/convention/src/main/kotlin/app/tivi/gradle/KotlinMultiplatformConventionPlugin.kt#L102-L103
-dependencies {
-    // KSP will eventually have better multiplatform support and we'll be able to simply have
-    // `ksp libs.kotlinInject.compiler` in the dependencies block of each source set
-    // https://github.com/google/ksp/pull/1021
-    add("kspAndroid", libs.kotlin.inject.compiler)
-    add("kspIosX64", libs.kotlin.inject.compiler)
-    add("kspIosArm64", libs.kotlin.inject.compiler)
-    add("kspIosSimulatorArm64", libs.kotlin.inject.compiler)
+            // directory where .db schema files should be stored, relative to the project root
+            // use ./gradlew data:tasks to list all available tasks for generating schema
+            // available task should be run before every migration
+            schemaOutputDirectory.set(file("src/main/sqldelight/databases"))
+
+            // migration files will fail during the build process if there are any errors in them
+            verifyMigrations.set(true)
+        }
+    }
 }

@@ -1,10 +1,12 @@
 package home.presenter
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
@@ -17,6 +19,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 sealed interface RoutinePickerEvent {
     data class RoutineSelected(val routine: RoutineInfo) : RoutinePickerEvent
@@ -30,6 +33,15 @@ fun Routine.toRoutineInfo(
     name = name,
     exercises = exercises,
     description = "${exercises.count()} exercises",
+    isSelected = isSelected,
+)
+
+fun RoutineInfo.toRoutine(
+    isSelected: Boolean = false,
+) = Routine(
+    id = id,
+    name = name,
+    exercises = exercises,
     isSelected = isSelected,
 )
 
@@ -63,6 +75,7 @@ class RoutinePickerPresenterFactory(
 @Composable
 internal fun RoutinePickerPresenter(
     routineRepository: RoutineRepository,
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
 ): RoutinePickerState {
     var availableRoutines = produceState(emptyList<RoutineInfo>()) {
         routineRepository
@@ -70,16 +83,17 @@ internal fun RoutinePickerPresenter(
             .map { routine -> routine.map(Routine::toRoutineInfo) }
             .collectLatest { value = it }
     }.value
-    var selectedRoutine by remember { mutableStateOf<RoutineInfo?>(null) }
+    var selectedRoutine = remember {
+        derivedStateOf { availableRoutines.find { it.isSelected } }
+    }.value
 
     return RoutinePickerState(
         routines = availableRoutines,
         selectedRoutine = selectedRoutine,
         onRoutineEvent = { event ->
             when (event) {
-                is RoutineSelected -> selectedRoutine = when {
-                    selectedRoutine == event.routine -> null
-                    else -> event.routine
+                is RoutineSelected -> coroutineScope.launch {
+                    routineRepository.upsertRoutine(event.routine.toRoutine(isSelected = true))
                 }
 
                 is NavigateToRoutines -> {

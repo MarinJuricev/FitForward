@@ -2,6 +2,7 @@ package home.di
 
 import home.HomeViewModel
 import home.presenter.CalendarPresenterFactory
+import home.presenter.ExercisePresenterFactory
 import home.presenter.RoutinePickerPresenterFactory
 import home.repository.InMemoryRoutineRepository
 import home.repository.RoutineRepository
@@ -14,5 +15,6 @@ val homeModule = module {
     viewModelOf(::HomeViewModel)
     factoryOf(::CalendarPresenterFactory)
     factoryOf(::RoutinePickerPresenterFactory)
+    factoryOf(::ExercisePresenterFactory)
     factoryOf(::InMemoryRoutineRepository) bind RoutineRepository::class
 }

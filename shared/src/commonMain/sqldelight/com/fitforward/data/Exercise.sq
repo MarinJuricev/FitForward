@@ -1,0 +1,36 @@
+CREATE TABLE exercise (
+  id TEXT NOT NULL PRIMARY KEY,
+  name TEXT NOT NULL
+);
+
+insertExercise:
+INSERT INTO exercise (
+  id,
+  name
+)
+VALUES (
+  :id,
+  :name
+);
+
+selectAllExercises:
+SELECT
+  exercise.id AS exerciseId,
+  exercise.name AS exerciseName
+FROM exercise;
+
+selectExerciseById:
+SELECT
+  exercise.id AS exerciseId,
+  exercise.name AS exerciseName
+FROM exercise
+WHERE exercise.id = :id;
+
+updateExercise:
+UPDATE exercise
+SET name = :name
+WHERE id = :id;
+
+deleteExercise:
+DELETE FROM exercise
+WHERE id = :id;

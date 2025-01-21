@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import core.date.toDayMonthYear
 import home.presenter.CalendarPresenterFactory
+import home.presenter.ExercisePresenterFactory
 import home.presenter.RoutinePickerPresenterFactory
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.filterNotNull
@@ -14,6 +15,7 @@ import kotlinx.datetime.LocalDate
 class HomeViewModel(
     calendarPresenterFactory: CalendarPresenterFactory,
     routinePickerPresenterFactory: RoutinePickerPresenterFactory,
+    exercisePresenterFactory: ExercisePresenterFactory,
 ) : ViewModel() {
 
     val calendarState = calendarPresenterFactory.create(viewModelScope)
@@ -21,7 +23,8 @@ class HomeViewModel(
         .map { state -> state.days.find { it.isSelected }?.date }
         .filterNotNull()
         .map(LocalDate::toDayMonthYear)
-        .stateIn(viewModelScope, SharingStarted.Lazily, "Date not selected")
+        .stateIn(viewModelScope, SharingStarted.Lazily, "")
 
     val routinePickerState = routinePickerPresenterFactory.create(viewModelScope)
+    val exerciseState = exercisePresenterFactory.create(viewModelScope)
 }

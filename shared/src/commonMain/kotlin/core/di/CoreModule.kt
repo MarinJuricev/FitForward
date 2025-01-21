@@ -1,9 +1,14 @@
+@file:OptIn(DelicateCoroutinesApi::class)
+
 package core.di
 
 import core.AppCoroutineDispatchers
 import core.DateProvider
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -28,4 +33,6 @@ val coreModule = module {
             main = Dispatchers.Main,
         )
     }
+
+    factory<CoroutineScope> { GlobalScope }
 }

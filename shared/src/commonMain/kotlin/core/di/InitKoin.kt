@@ -10,6 +10,7 @@ fun initKoin(
     consumerDeclaration()
     modules(
         listOf(
+            platformModule(),
             coreModule,
             homeModule,
         )

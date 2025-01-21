@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -14,11 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import design.FitBodyMediumText
 import design.FitTopAppBar
 import home.components.FitCalendarPicker
 import home.components.RoutinePicker
 import home.presenter.CalendarState
+import home.presenter.ExerciseState
 import home.presenter.RoutinePickerState
+import home.repository.Exercise
 import kotlinx.serialization.Serializable
 import navigation.Route
 
@@ -30,6 +35,7 @@ object HomeRoute : Route
 fun HomeScreen(
     calendarState: CalendarState,
     routinePickerState: RoutinePickerState,
+    exerciseState: ExerciseState,
     selectedDate: String,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -58,8 +64,26 @@ fun HomeScreen(
                         .padding(vertical = 8.dp, horizontal = 12.dp),
                     routineState = routinePickerState,
                 )
+                LazyColumn {
+                    items(exerciseState.exercises, key = { it.id }) { exercise ->
+                        ExerciseItem(exercise)
+                    }
+                }
             }
         }
+    )
+}
+
+@Composable
+private fun ExerciseItem(
+    exercise: Exercise,
+    modifier: Modifier = Modifier
+) {
+    FitBodyMediumText(
+        text = exercise.name,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp)
     )
 }
 
