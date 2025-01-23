@@ -66,7 +66,10 @@ fun HomeScreen(
                 )
                 LazyColumn {
                     items(exerciseState.exercises, key = { it.id }) { exercise ->
-                        ExerciseItem(exercise)
+                        ExerciseItem(
+                            modifier = Modifier.animateItem(),
+                            exercise = exercise,
+                        )
                     }
                 }
             }
