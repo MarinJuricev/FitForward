@@ -5,10 +5,14 @@ import androidx.lifecycle.viewModelScope
 import core.date.toDayMonthYear
 import home.presenter.CalendarPresenterFactory
 import home.presenter.ExercisePresenterFactory
+import home.presenter.ExerciseState
 import home.presenter.RoutinePickerPresenterFactory
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.datetime.LocalDate
 
@@ -26,5 +30,10 @@ class HomeViewModel(
         .stateIn(viewModelScope, SharingStarted.Lazily, "")
 
     val routinePickerState = routinePickerPresenterFactory.create(viewModelScope)
-    val exerciseState = exercisePresenterFactory.create(viewModelScope)
+
+    val exerciseState = routinePickerState.flatMapLatest {
+        it.selectedRoutine?.let { selectedRoutine ->
+            exercisePresenterFactory.create(viewModelScope, selectedRoutine.id)
+        } ?: flowOf(ExerciseState())
+    }.stateIn(viewModelScope, SharingStarted.Lazily, ExerciseState())
 }

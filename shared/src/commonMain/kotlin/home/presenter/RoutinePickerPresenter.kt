@@ -1,18 +1,16 @@
 package home.presenter
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import home.presenter.RoutinePickerEvent.NavigateToRoutines
 import home.presenter.RoutinePickerEvent.RoutineSelected
-import home.repository.Exercise
 import home.repository.Routine
 import home.repository.RoutineRepository
 import kotlinx.coroutines.CoroutineScope
@@ -26,14 +24,12 @@ sealed interface RoutinePickerEvent {
     data object NavigateToRoutines : RoutinePickerEvent
 }
 
-fun Routine.toRoutineInfo(
-    isSelected: Boolean = false,
-) = RoutineInfo(
+fun Routine.toRoutineInfo() = RoutineInfo(
     id = id,
     name = name,
-    exercises = exercises,
-    description = "${exercises.count()} exercises",
+    description = "$exercisesCount exercises",
     isSelected = isSelected,
+    exerciseCount = exercisesCount,
 )
 
 fun RoutineInfo.toRoutine(
@@ -41,7 +37,7 @@ fun RoutineInfo.toRoutine(
 ) = Routine(
     id = id,
     name = name,
-    exercises = exercises,
+    exercisesCount = exerciseCount,
     isSelected = isSelected,
 )
 
@@ -56,7 +52,7 @@ data class RoutineInfo(
     val name: String,
     val isSelected: Boolean,
     val description: String,
-    val exercises: List<Exercise>,
+    val exerciseCount: Int,
 )
 
 class RoutinePickerPresenterFactory(
@@ -77,15 +73,15 @@ internal fun RoutinePickerPresenter(
     routineRepository: RoutineRepository,
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ): RoutinePickerState {
-    var availableRoutines = produceState(emptyList<RoutineInfo>()) {
-        routineRepository
-            .observeRoutines()
-            .map { routine -> routine.map(Routine::toRoutineInfo) }
-            .collectLatest { value = it }
-    }.value
-    var selectedRoutine = remember {
+    val availableRoutines by routineRepository
+        .observeRoutines()
+        .map { routine -> routine.map(Routine::toRoutineInfo) }
+        .collectAsState(emptyList())
+
+    val selectedRoutine = remember(availableRoutines) {
         derivedStateOf { availableRoutines.find { it.isSelected } }
     }.value
+
 
     return RoutinePickerState(
         routines = availableRoutines,

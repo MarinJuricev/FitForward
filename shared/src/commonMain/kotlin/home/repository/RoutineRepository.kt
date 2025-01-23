@@ -1,99 +1,95 @@
 package home.repository
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
+import com.fitforward.data.FitForwardDatabase
+import core.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 interface RoutineRepository {
 
     fun observeRoutines(): Flow<List<Routine>>
 
-    fun observeExercises(): Flow<List<Exercise>>
+    fun observeExercises(routineId: String): Flow<List<Exercise>>
 
     suspend fun upsertRoutine(routine: Routine)
 
     suspend fun deleteRoutine(id: String)
 }
 
-@OptIn(ExperimentalCoroutinesApi::class)
-class InMemoryRoutineRepository(
-    coroutineScope: CoroutineScope,
+class SqlDelightRoutineRepository(
+    fitForwardDatabase: FitForwardDatabase,
+    private val coroutineDispatchers: AppCoroutineDispatchers,
 ) : RoutineRepository {
 
-    private val _routines = MutableStateFlow<List<Routine>>(initialRoutines)
+    private val routineQueries = fitForwardDatabase.routineQueries
+    private val exerciseQueries = fitForwardDatabase.routineExerciseQueries
+    private val queries = fitForwardDatabase.routineExerciseQueries
 
-    private val routines = _routines
-        .stateIn(coroutineScope, SharingStarted.Eagerly, initialRoutines)
+    override fun observeRoutines(): Flow<List<Routine>> = routineQueries
+        .selectAllRoutines()
+        .asFlow()
+        .mapToList(coroutineDispatchers.io)
+        .map { dbRoutineList ->
+            dbRoutineList.map { dbRoutine ->
+                Routine(
+                    id = dbRoutine.routineId,
+                    name = dbRoutine.routineName,
+                    isSelected = dbRoutine.routineIsSelected,
+                    exercisesCount = exerciseQueries.selectExercisesForRoutine(dbRoutine.routineId)
+                        .executeAsList()
+                        .count()
+                )
+            }
+        }
 
-    private val exercises = _routines.mapLatest { routines ->
-        routines
-            .filter { routine -> routine.isSelected }
-            .flatMap { routine -> routine.exercises }
-    }.stateIn(coroutineScope, SharingStarted.Eagerly, emptyList<Exercise>())
-
-    override fun observeRoutines(): Flow<List<Routine>> = _routines
-
-    override fun observeExercises(): Flow<List<Exercise>> = exercises
+    override fun observeExercises(
+        routineId: String
+    ): Flow<List<Exercise>> = exerciseQueries.selectExercisesForRoutine(routineId)
+        .asFlow()
+        .mapToList(coroutineDispatchers.io)
+        .map { dbExercises -> dbExercises.map { Exercise(it.exerciseId, it.exerciseName) } }
 
     override suspend fun upsertRoutine(routine: Routine) {
-        _routines.update { existingRoutines ->
-//                .takeIf { it.any { existing -> existing.id == routine.id } }
-//                ?: (existingRoutines + routine)
-            existingRoutines.map {
-                if (it.id == routine.id) routine
-                else it.copy(isSelected = false)
+        withContext(coroutineDispatchers.io) {
+            val existing = routineQueries.selectRoutineById(routine.id).executeAsOneOrNull()
+            if (existing == null) {
+                routineQueries.insertRoutine(
+                    id = routine.id,
+                    name = routine.name,
+                    isSelected = routine.isSelected
+                )
+            } else {
+                routineQueries.updateRoutine(
+                    id = routine.id,
+                    name = routine.name,
+                    isSelected = routine.isSelected
+                )
             }
         }
     }
 
     override suspend fun deleteRoutine(id: String) {
-        _routines.update { it.filter { routine -> routine.id != id } }
+        withContext(coroutineDispatchers.io) {
+            // Remove relationships first
+            queries.deleteRoutineExercisesForRoutine(id)
+            // Then delete the routine
+            routineQueries.deleteRoutine(id)
+        }
     }
+
 }
 
 data class Routine(
     val id: String,
     val name: String,
     val isSelected: Boolean = false,
-    val exercises: List<Exercise>,
+    val exercisesCount: Int,
 )
 
 data class Exercise(
     val id: String,
     val name: String
-)
-
-private val initialRoutines = listOf(
-    Routine(
-        id = "1",
-        name = "Back",
-        exercises = listOf(
-            Exercise(id = "1", name = "Deadlift"),
-            Exercise(id = "2", name = "Pull-up"),
-            Exercise(id = "3", name = "Bent-over row"),
-        )
-    ),
-    Routine(
-        id = "2",
-        name = "Legs",
-        exercises = listOf(
-            Exercise(id = "4", name = "Squat"),
-            Exercise(id = "5", name = "Lunges"),
-            Exercise(id = "6", name = "Leg press"),
-        )
-    ),
-    Routine(
-        id = "3",
-        name = "Chest",
-        exercises = listOf(
-            Exercise(id = "7", name = "Bench press"),
-            Exercise(id = "8", name = "Push-up"),
-            Exercise(id = "9", name = "Chest fly"),
-        )
-    ),
 )

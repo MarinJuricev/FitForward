@@ -15,8 +15,8 @@ sealed interface ExerciseEvent {
 }
 
 data class ExerciseState(
-    val exercises: List<Exercise>,
-    val onExerciseEvent: (ExerciseEvent) -> Unit,
+    val exercises: List<Exercise> = emptyList(),
+    val onExerciseEvent: (ExerciseEvent) -> Unit = {},
 )
 
 class ExercisePresenterFactory(
@@ -24,10 +24,12 @@ class ExercisePresenterFactory(
 ) {
 
     fun create(
-        coroutineScope: CoroutineScope
+        coroutineScope: CoroutineScope,
+        routineId: String,
     ): StateFlow<ExerciseState> = coroutineScope
         .launchMolecule(RecompositionMode.Immediate) {
             ExercisePresenter(
+                routineId = routineId,
                 routineRepository = routineRepository,
             )
         }
@@ -35,9 +37,10 @@ class ExercisePresenterFactory(
 
 @Composable
 internal fun ExercisePresenter(
+    routineId: String,
     routineRepository: RoutineRepository,
 ): ExerciseState {
-    val exercises by routineRepository.observeExercises().collectAsState(emptyList())
+    val exercises by routineRepository.observeExercises(routineId).collectAsState(emptyList())
 //    var exercises = produceState(emptyList<Exercise>()) {
 //        routineRepository
 //            .observeExercises()
