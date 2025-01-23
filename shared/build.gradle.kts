@@ -88,7 +88,7 @@ android {
 
 sqldelight {
     databases {
-        create("Database") {
+        create("FitForwardDatabase") {
             // package name used for the database class
             packageName.set("com.fitforward.data")
             // generate suspending query methods with asynchronous drivers

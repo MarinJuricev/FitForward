@@ -2,13 +2,13 @@
 
 package core.di
 
+import com.fitforward.data.FitForwardDatabase
 import core.AppCoroutineDispatchers
 import core.DateProvider
+import db.DriverFactory
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -34,5 +34,9 @@ val coreModule = module {
         )
     }
 
-    factory<CoroutineScope> { GlobalScope }
+    single {
+        FitForwardDatabase(
+            driver = get<DriverFactory>().createDriver(),
+        )
+    }
 }

@@ -1,0 +1,46 @@
+import kotlin.Boolean;
+
+CREATE TABLE IF NOT EXISTS routine (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    is_selected INTEGER AS Boolean NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS exercise (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS routine_exercise (
+    routine_id TEXT NOT NULL,
+    exercise_id TEXT NOT NULL,
+    PRIMARY KEY (routine_id, exercise_id),
+    FOREIGN KEY (routine_id) REFERENCES routine(id),
+    FOREIGN KEY (exercise_id) REFERENCES exercise(id)
+);
+
+-- Seed routines
+INSERT INTO routine (id, name, is_selected) VALUES
+    ('1', 'Leg Day', 1),
+    ('2', 'Push Day', 0),
+    ('3', 'Pull Day', 0);
+
+-- Seed exercises
+INSERT INTO exercise (id, name) VALUES
+    ('1', 'Squat'),
+    ('2', 'Lunges'),
+    ('3', 'Deadlift'),
+    ('4', 'Bench Press'),
+    ('5', 'Overhead Press'),
+    ('6', 'Pull-up'),
+    ('7', 'Barbell Row');
+
+-- Link routines with exercises
+INSERT INTO routine_exercise (routine_id, exercise_id) VALUES
+    ('1', '1'), -- Leg Day -> Squat
+    ('1', '2'), -- Leg Day -> Lunges
+    ('2', '4'), -- Push Day -> Bench Press
+    ('2', '5'), -- Push Day -> Overhead Press
+    ('3', '3'), -- Pull Day -> Deadlift
+    ('3', '6'), -- Pull Day -> Pull-up
+    ('3', '7'); -- Pull Day -> Barbell Row

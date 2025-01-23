@@ -47,3 +47,7 @@ deleteRoutineExercise:
 DELETE FROM routine_exercise
 WHERE routine_id = :routineId
   AND exercise_id = :exerciseId;
+
+deleteRoutineExercisesForRoutine:
+DELETE FROM routine_exercise
+WHERE routine_id = :routineId;

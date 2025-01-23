@@ -45,6 +45,7 @@ kotlin {
 
         androidMain.dependencies {
             implementation(compose.preview)
+            implementation(libs.koin.android)
             implementation(libs.androidx.activity.compose)
         }
         commonMain.dependencies {
