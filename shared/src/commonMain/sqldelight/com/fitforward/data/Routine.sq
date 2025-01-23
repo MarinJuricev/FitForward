@@ -1,43 +1,35 @@
-import kotlin.Boolean;
-
-CREATE TABLE routine (
+CREATE TABLE IF NOT EXISTS routine (
   id TEXT NOT NULL PRIMARY KEY,
-  name TEXT NOT NULL,
-  is_selected INTEGER AS Boolean NOT NULL DEFAULT 0
+  name TEXT NOT NULL
 );
 
 insertRoutine:
 INSERT INTO routine (
   id,
-  name,
-  is_selected
+  name
 )
 VALUES (
   :id,
-  :name,
-  :isSelected
+  :name
 );
 
 selectAllRoutines:
 SELECT
   routine.id AS routineId,
-  routine.name AS routineName,
-  routine.is_selected AS routineIsSelected
+  routine.name AS routineName
 FROM routine;
 
 selectRoutineById:
 SELECT
   routine.id AS routineId,
-  routine.name AS routineName,
-  routine.is_selected AS routineIsSelected
+  routine.name AS routineName
 FROM routine
 WHERE routine.id = :id;
 
 updateRoutine:
 UPDATE routine
 SET
-  name = :name,
-  is_selected = :isSelected
+  name = :name
 WHERE id = :id;
 
 deleteRoutine:

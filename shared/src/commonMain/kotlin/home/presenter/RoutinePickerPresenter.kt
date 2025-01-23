@@ -2,11 +2,10 @@ package home.presenter
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import home.presenter.RoutinePickerEvent.NavigateToRoutines
@@ -15,16 +14,16 @@ import home.repository.Routine
 import home.repository.RoutineRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 
 sealed interface RoutinePickerEvent {
     data class RoutineSelected(val routine: RoutineInfo) : RoutinePickerEvent
     data object NavigateToRoutines : RoutinePickerEvent
 }
 
-fun Routine.toRoutineInfo() = RoutineInfo(
+fun Routine.toRoutineInfo(
+    isSelected: Boolean = false
+) = RoutineInfo(
     id = id,
     name = name,
     description = "$exercisesCount exercises",
@@ -32,13 +31,10 @@ fun Routine.toRoutineInfo() = RoutineInfo(
     exerciseCount = exercisesCount,
 )
 
-fun RoutineInfo.toRoutine(
-    isSelected: Boolean = false,
-) = Routine(
+fun RoutineInfo.toRoutine() = Routine(
     id = id,
     name = name,
     exercisesCount = exerciseCount,
-    isSelected = isSelected,
 )
 
 data class RoutinePickerState(
@@ -71,26 +67,21 @@ class RoutinePickerPresenterFactory(
 @Composable
 internal fun RoutinePickerPresenter(
     routineRepository: RoutineRepository,
-    coroutineScope: CoroutineScope = rememberCoroutineScope()
 ): RoutinePickerState {
     val availableRoutines by routineRepository
         .observeRoutines()
         .map { routine -> routine.map(Routine::toRoutineInfo) }
         .collectAsState(emptyList())
-
-    val selectedRoutine = remember(availableRoutines) {
-        derivedStateOf { availableRoutines.find { it.isSelected } }
-    }.value
-
+    var selectedRoutine by remember { mutableStateOf<RoutineInfo?>(null) }
 
     return RoutinePickerState(
         routines = availableRoutines,
         selectedRoutine = selectedRoutine,
         onRoutineEvent = { event ->
             when (event) {
-                is RoutineSelected -> coroutineScope.launch {
-                    routineRepository.upsertRoutine(event.routine.toRoutine(isSelected = true))
-                }
+                is RoutineSelected -> selectedRoutine =
+                    if (event.routine == selectedRoutine) null
+                    else event.routine
 
                 is NavigateToRoutines -> {
 

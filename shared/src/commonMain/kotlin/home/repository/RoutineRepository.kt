@@ -37,7 +37,6 @@ class SqlDelightRoutineRepository(
                 Routine(
                     id = dbRoutine.routineId,
                     name = dbRoutine.routineName,
-                    isSelected = dbRoutine.routineIsSelected,
                     exercisesCount = exerciseQueries.selectExercisesForRoutine(dbRoutine.routineId)
                         .executeAsList()
                         .count()
@@ -59,13 +58,11 @@ class SqlDelightRoutineRepository(
                 routineQueries.insertRoutine(
                     id = routine.id,
                     name = routine.name,
-                    isSelected = routine.isSelected
                 )
             } else {
                 routineQueries.updateRoutine(
                     id = routine.id,
                     name = routine.name,
-                    isSelected = routine.isSelected
                 )
             }
         }
@@ -85,7 +82,6 @@ class SqlDelightRoutineRepository(
 data class Routine(
     val id: String,
     val name: String,
-    val isSelected: Boolean = false,
     val exercisesCount: Int,
 )
 

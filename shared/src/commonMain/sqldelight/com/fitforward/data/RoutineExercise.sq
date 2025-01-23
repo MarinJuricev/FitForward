@@ -1,4 +1,4 @@
-CREATE TABLE routine_exercise (
+CREATE TABLE IF NOT EXISTS routine_exercise (
   routine_id TEXT NOT NULL,
   exercise_id TEXT NOT NULL,
 
@@ -36,8 +36,7 @@ WHERE routine_exercise.routine_id = :routineId;
 selectRoutinesForExercise:
 SELECT
   routine.id AS routineId,
-  routine.name AS routineName,
-  routine.is_selected AS routineIsSelected
+  routine.name AS routineName
 FROM routine
 JOIN routine_exercise
   ON routine.id = routine_exercise.routine_id
