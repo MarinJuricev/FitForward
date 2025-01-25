@@ -1,6 +1,8 @@
 package home
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,13 +19,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import design.FitBodyMediumText
+import design.FitCard
 import design.FitTopAppBar
 import home.components.FitCalendarPicker
+import home.components.LazyAPIs
 import home.components.RoutinePicker
+import home.model.Exercise
 import home.presenter.CalendarState
 import home.presenter.ExerciseState
 import home.presenter.RoutinePickerState
-import home.repository.Exercise
 import kotlinx.serialization.Serializable
 import navigation.Route
 
@@ -64,10 +68,13 @@ fun HomeScreen(
                         .padding(vertical = 8.dp, horizontal = 12.dp),
                     routineState = routinePickerState,
                 )
-                LazyColumn {
+                LazyColumn(
+                    contentPadding = PaddingValues(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     items(exerciseState.exercises, key = { it.id }) { exercise ->
                         ExerciseItem(
-                            modifier = Modifier.animateItem(),
+                            modifier = Modifier,
                             exercise = exercise,
                         )
                     }
@@ -82,11 +89,17 @@ private fun ExerciseItem(
     exercise: Exercise,
     modifier: Modifier = Modifier
 ) {
-    FitBodyMediumText(
-        text = exercise.name,
+    FitCard(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    )
+            .padding(horizontal = 8.dp)
+    ) {
+        FitBodyMediumText(
+            text = exercise.name,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        )
+
+    }
 }
 
