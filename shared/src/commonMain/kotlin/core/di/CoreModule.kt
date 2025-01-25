@@ -40,7 +40,10 @@ val coreModule = module {
     }
 
     single {
-        val driver = get<DriverFactory>().createDriver()
+        val driver = get<DriverFactory>().createDriver().apply {
+            // Enable foreign keys
+            execute(null, "PRAGMA foreign_keys = ON", 0)
+        }
 
         // Seed the data
         FitForwardSchema.create(driver)
@@ -63,7 +66,7 @@ object FitForwardSchema :
 }
 
 private suspend fun FitForwardDatabase.seedDatabase() {
-    if(routineQueries.selectAllRoutines().executeAsList().isNotEmpty()) return
+    if (routineQueries.selectAllRoutines().executeAsList().isNotEmpty()) return
     // Insert Routines
     routineQueries.insertRoutine("1", "Leg Day")
     routineQueries.insertRoutine("2", "Push Day")
