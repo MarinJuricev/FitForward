@@ -1,0 +1,55 @@
+CREATE TABLE IF NOT EXISTS routine_history (
+  id TEXT NOT NULL PRIMARY KEY,
+  routine_id TEXT NOT NULL,
+  performed_at TEXT NOT NULL, -- storing date in "YYYY-MM-DD" format
+
+  FOREIGN KEY (routine_id) REFERENCES routine(id) ON DELETE CASCADE
+);
+
+insertRoutineHistory:
+INSERT INTO routine_history (
+  id,
+  routine_id,
+  performed_at
+)
+VALUES (
+  :id,
+  :routineId,
+  :performedAt
+);
+
+selectAllRoutineHistory:
+SELECT
+  routine_history.id AS historyId,
+  routine_history.routine_id AS routineId,
+  routine_history.performed_at AS performedAt
+FROM routine_history;
+
+selectRoutineHistoryByRoutineId:
+SELECT
+  routine_history.id AS historyId,
+  routine_history.routine_id AS routineId,
+  routine_history.performed_at AS performedAt
+FROM routine_history
+WHERE routine_history.routine_id = :routineId;
+
+selectRoutineHistoryByDate:
+SELECT
+  routine_history.id AS historyId,
+  routine_history.routine_id AS routineId,
+  routine_history.performed_at AS performedAt
+FROM routine_history
+WHERE routine_history.performed_at = :performedAt;
+
+selectRoutinesByDate:
+SELECT
+  routine.id AS routineId,
+  routine.name AS routineName
+FROM routine
+JOIN routine_history
+  ON routine_history.routine_id = routine.id
+WHERE routine_history.performed_at = :performedAt;
+
+deleteRoutineHistory:
+DELETE FROM routine_history
+WHERE id = :id;

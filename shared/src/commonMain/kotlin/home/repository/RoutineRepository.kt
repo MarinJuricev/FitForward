@@ -4,6 +4,9 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.fitforward.data.FitForwardDatabase
 import core.AppCoroutineDispatchers
+import home.model.Exercise
+import home.model.Routine
+import home.model.RoutineHistory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -17,6 +20,10 @@ interface RoutineRepository {
     suspend fun upsertRoutine(routine: Routine)
 
     suspend fun deleteRoutine(id: String)
+
+    suspend fun insertRoutineHistory(history: RoutineHistory)
+
+    fun observeRoutinesByDate(date: String): Flow<List<Routine>>
 }
 
 class SqlDelightRoutineRepository(
@@ -27,6 +34,7 @@ class SqlDelightRoutineRepository(
     private val routineQueries = fitForwardDatabase.routineQueries
     private val exerciseQueries = fitForwardDatabase.routineExerciseQueries
     private val queries = fitForwardDatabase.routineExerciseQueries
+    private val historyQueries = fitForwardDatabase.routineHistoryQueries
 
     override fun observeRoutines(): Flow<List<Routine>> = routineQueries
         .selectAllRoutines()
@@ -70,22 +78,27 @@ class SqlDelightRoutineRepository(
 
     override suspend fun deleteRoutine(id: String) {
         withContext(coroutineDispatchers.io) {
-            // Remove relationships first
-            queries.deleteRoutineExercisesForRoutine(id)
-            // Then delete the routine
             routineQueries.deleteRoutine(id)
         }
     }
 
+    override suspend fun insertRoutineHistory(
+        history: RoutineHistory,
+    ) {
+        withContext(coroutineDispatchers.io) {
+            historyQueries.insertRoutineHistory(
+                id = history.id,
+                routineId = history.routineId,
+                performedAt = history.performedAt,
+            )
+        }
+    }
+
+    override fun observeRoutinesByDate(
+        date: String,
+    ): Flow<List<Routine>> = historyQueries
+        .selectRoutinesByDate(date)
+        .asFlow()
+        .mapToList(coroutineDispatchers.io)
+        .map { dbRoutines -> dbRoutines.map { Routine(it.routineId, it.routineName, 0) } }
 }
-
-data class Routine(
-    val id: String,
-    val name: String,
-    val exercisesCount: Int,
-)
-
-data class Exercise(
-    val id: String,
-    val name: String
-)
