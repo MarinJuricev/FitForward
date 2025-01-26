@@ -7,6 +7,7 @@ import core.AppCoroutineDispatchers
 import core.IdProvider
 import home.model.Exercise
 import home.model.Routine
+import home.model.RoutineHistory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -21,10 +22,7 @@ interface RoutineRepository {
 
     suspend fun deleteRoutine(id: String)
 
-    suspend fun insertRoutineHistory(
-        routineId: String,
-        date: String,
-    )
+    suspend fun insertRoutineHistory(routineHistory: RoutineHistory)
 
     fun observeRoutinesByDate(date: String): Flow<List<Routine>>
 }
@@ -36,8 +34,7 @@ class SqlDelightRoutineRepository(
 ) : RoutineRepository {
 
     private val routineQueries = fitForwardDatabase.routineQueries
-    private val exerciseQueries = fitForwardDatabase.routineExerciseQueries
-    private val queries = fitForwardDatabase.routineExerciseQueries
+    private val routineExerciseQueries = fitForwardDatabase.routineExerciseQueries
     private val historyQueries = fitForwardDatabase.routineHistoryQueries
 
     override fun observeRoutines(): Flow<List<Routine>> = routineQueries
@@ -49,19 +46,27 @@ class SqlDelightRoutineRepository(
                 Routine(
                     id = dbRoutine.routineId,
                     name = dbRoutine.routineName,
-                    exercisesCount = exerciseQueries.selectExercisesForRoutine(dbRoutine.routineId)
+                    exercisesCount = routineExerciseQueries
+                        .selectExercisesForRoutine(dbRoutine.routineId)
                         .executeAsList()
                         .count()
                 )
             }
         }
 
-    override fun observeExercises(
-        routineId: String
-    ): Flow<List<Exercise>> = exerciseQueries.selectExercisesForRoutine(routineId)
-        .asFlow()
-        .mapToList(coroutineDispatchers.io)
-        .map { dbExercises -> dbExercises.map { Exercise(it.exerciseId, it.exerciseName) } }
+    override fun observeExercises(routineId: String): Flow<List<Exercise>> =
+        routineExerciseQueries
+            .selectExercisesForRoutine(routineId)
+            .asFlow()
+            .mapToList(coroutineDispatchers.io)
+            .map { dbExercises ->
+                dbExercises.map {
+                    Exercise(
+                        id = it.exerciseId,
+                        name = it.exerciseName,
+                    )
+                }
+            }
 
     override suspend fun upsertRoutine(routine: Routine) {
         withContext(coroutineDispatchers.io) {
@@ -86,26 +91,33 @@ class SqlDelightRoutineRepository(
         }
     }
 
-    override suspend fun insertRoutineHistory(
-        routineId: String,
-        date: String,
-    ) {
+    override suspend fun insertRoutineHistory(routineHistory: RoutineHistory) {
         withContext(coroutineDispatchers.io) {
             historyQueries.insertRoutineHistory(
                 id = idProvider.generate(),
-                routineId = routineId,
-                performedAt = date,
-                durationSeconds = null,
-                notes = null,
+                routineId = routineHistory.routineId,
+                performedAt = routineHistory.performedAt,
+                durationSeconds = routineHistory.durationSeconds,
+                notes = routineHistory.notes
             )
         }
     }
 
-    override fun observeRoutinesByDate(
-        date: String,
-    ): Flow<List<Routine>> = historyQueries
-        .selectRoutinesByDate(date)
-        .asFlow()
-        .mapToList(coroutineDispatchers.io)
-        .map { dbRoutines -> dbRoutines.map { Routine(it.routineId, it.routineName, 0) } }
+    override fun observeRoutinesByDate(date: String): Flow<List<Routine>> =
+        historyQueries
+            .selectRoutinesByDate(date)
+            .asFlow()
+            .mapToList(coroutineDispatchers.io)
+            .map { dbRoutines ->
+                dbRoutines.map {
+                    Routine(
+                        id = it.routineId,
+                        name = it.routineName,
+                        exercisesCount = routineExerciseQueries
+                            .selectExercisesForRoutine(it.routineId)
+                            .executeAsList()
+                            .count()
+                    )
+                }
+            }
 }
