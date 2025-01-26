@@ -5,6 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
@@ -67,6 +68,7 @@ class RoutinePickerPresenterFactory(
 @Composable
 internal fun RoutinePickerPresenter(
     routineRepository: RoutineRepository,
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
 ): RoutinePickerState {
     val availableRoutines by routineRepository
         .observeRoutines()
@@ -79,9 +81,14 @@ internal fun RoutinePickerPresenter(
         selectedRoutine = selectedRoutine,
         onRoutineEvent = { event ->
             when (event) {
-                is RoutineSelected -> selectedRoutine =
-                    if (event.routine == selectedRoutine) null
-                    else event.routine
+                is RoutineSelected -> {
+                    selectedRoutine =
+                        if (event.routine == selectedRoutine) null
+                        else event.routine
+//                    routineRepository.insertRoutineHistory(
+//
+//                    )
+                }
 
                 is NavigateToRoutines -> {
 

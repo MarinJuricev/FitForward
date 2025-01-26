@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS exercise (
   id TEXT NOT NULL PRIMARY KEY,
-  name TEXT NOT NULL
+  name TEXT NOT NULL UNIQUE
 );
 
 insertExercise:

@@ -4,9 +4,9 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.fitforward.data.FitForwardDatabase
 import core.AppCoroutineDispatchers
+import core.IdProvider
 import home.model.Exercise
 import home.model.Routine
-import home.model.RoutineHistory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -21,13 +21,17 @@ interface RoutineRepository {
 
     suspend fun deleteRoutine(id: String)
 
-    suspend fun insertRoutineHistory(history: RoutineHistory)
+    suspend fun insertRoutineHistory(
+        routineId: String,
+        date: String,
+    )
 
     fun observeRoutinesByDate(date: String): Flow<List<Routine>>
 }
 
 class SqlDelightRoutineRepository(
     fitForwardDatabase: FitForwardDatabase,
+    private val idProvider: IdProvider,
     private val coroutineDispatchers: AppCoroutineDispatchers,
 ) : RoutineRepository {
 
@@ -83,13 +87,16 @@ class SqlDelightRoutineRepository(
     }
 
     override suspend fun insertRoutineHistory(
-        history: RoutineHistory,
+        routineId: String,
+        date: String,
     ) {
         withContext(coroutineDispatchers.io) {
             historyQueries.insertRoutineHistory(
-                id = history.id,
-                routineId = history.routineId,
-                performedAt = history.performedAt,
+                id = idProvider.generate(),
+                routineId = routineId,
+                performedAt = date,
+                durationSeconds = null,
+                notes = null,
             )
         }
     }

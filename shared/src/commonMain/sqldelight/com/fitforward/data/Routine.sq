@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS routine (
   id TEXT NOT NULL PRIMARY KEY,
-  name TEXT NOT NULL
+  name TEXT NOT NULL UNIQUE,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%d', 'now'))
 );
 
 insertRoutine:
@@ -16,7 +17,8 @@ VALUES (
 selectAllRoutines:
 SELECT
   routine.id AS routineId,
-  routine.name AS routineName
+  routine.name AS routineName,
+  routine.created_at AS createdAt
 FROM routine;
 
 selectRoutineById:

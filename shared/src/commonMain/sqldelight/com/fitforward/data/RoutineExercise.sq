@@ -1,6 +1,9 @@
 CREATE TABLE IF NOT EXISTS routine_exercise (
   routine_id TEXT NOT NULL,
   exercise_id TEXT NOT NULL,
+  position INTEGER NOT NULL,
+  sets INTEGER,
+  reps INTEGER,
 
   PRIMARY KEY (routine_id, exercise_id),
 
@@ -11,17 +14,26 @@ CREATE TABLE IF NOT EXISTS routine_exercise (
 insertRoutineExercise:
 INSERT INTO routine_exercise (
   routine_id,
-  exercise_id
+  exercise_id,
+  position,
+  sets,
+  reps
 )
 VALUES (
   :routineId,
-  :exerciseId
+  :exerciseId,
+ :position,
+  :sets,
+  :reps
 );
 
 selectAllRoutineExercises:
 SELECT
   routine_exercise.routine_id AS routineId,
-  routine_exercise.exercise_id AS exerciseId
+  routine_exercise.exercise_id AS exerciseId,
+  routine_exercise.position AS position,
+  routine_exercise.sets AS sets,
+  routine_exercise.reps AS reps
 FROM routine_exercise;
 
 selectExercisesForRoutine:
@@ -36,7 +48,8 @@ WHERE routine_exercise.routine_id = :routineId;
 selectRoutinesForExercise:
 SELECT
   routine.id AS routineId,
-  routine.name AS routineName
+  routine.name AS routineName,
+  routine.created_at AS createdAt
 FROM routine
 JOIN routine_exercise
   ON routine.id = routine_exercise.routine_id

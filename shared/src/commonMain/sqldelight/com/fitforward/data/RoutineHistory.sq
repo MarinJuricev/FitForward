@@ -1,35 +1,48 @@
 CREATE TABLE IF NOT EXISTS routine_history (
   id TEXT NOT NULL PRIMARY KEY,
   routine_id TEXT NOT NULL,
-  performed_at TEXT NOT NULL, -- storing date in "YYYY-MM-DD" format
+  performed_at TEXT NOT NULL,
+  duration_seconds INTEGER,
+  notes TEXT,
 
   FOREIGN KEY (routine_id) REFERENCES routine(id) ON DELETE CASCADE
 );
+
+CREATE INDEX idx_routine_history_routine_id ON routine_history(routine_id);
+CREATE INDEX idx_routine_history_performed_at ON routine_history(performed_at);
 
 insertRoutineHistory:
 INSERT INTO routine_history (
   id,
   routine_id,
-  performed_at
+  performed_at,
+  duration_seconds,
+  notes
 )
 VALUES (
   :id,
-  :routineId,
-  :performedAt
+:routineId,
+  :performedAt,
+:durationSeconds,
+    :notes
 );
 
 selectAllRoutineHistory:
 SELECT
   routine_history.id AS historyId,
   routine_history.routine_id AS routineId,
-  routine_history.performed_at AS performedAt
+  routine_history.performed_at AS performedAt,
+  routine_history.duration_seconds AS durationSeconds,
+  routine_history.notes AS notes
 FROM routine_history;
 
 selectRoutineHistoryByRoutineId:
 SELECT
   routine_history.id AS historyId,
   routine_history.routine_id AS routineId,
-  routine_history.performed_at AS performedAt
+  routine_history.performed_at AS performedAt,
+  routine_history.duration_seconds AS durationSeconds,
+  routine_history.notes AS notes
 FROM routine_history
 WHERE routine_history.routine_id = :routineId;
 
@@ -37,14 +50,17 @@ selectRoutineHistoryByDate:
 SELECT
   routine_history.id AS historyId,
   routine_history.routine_id AS routineId,
-  routine_history.performed_at AS performedAt
+  routine_history.performed_at AS performedAt,
+  routine_history.duration_seconds AS durationSeconds,
+  routine_history.notes AS notes
 FROM routine_history
 WHERE routine_history.performed_at = :performedAt;
 
 selectRoutinesByDate:
 SELECT
   routine.id AS routineId,
-  routine.name AS routineName
+  routine.name AS routineName,
+  routine.created_at AS createdAt
 FROM routine
 JOIN routine_history
   ON routine_history.routine_id = routine.id
