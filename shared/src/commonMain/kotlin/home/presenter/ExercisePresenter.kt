@@ -26,10 +26,12 @@ class ExercisePresenterFactory(
     fun create(
         coroutineScope: CoroutineScope,
         routineId: String,
+        date: String,
     ): StateFlow<ExerciseState> = coroutineScope
         .launchMolecule(RecompositionMode.Immediate) {
             ExercisePresenter(
                 routineId = routineId,
+                selectedDate = date,
                 routineRepository = routineRepository,
             )
         }
@@ -38,6 +40,7 @@ class ExercisePresenterFactory(
 @Composable
 internal fun ExercisePresenter(
     routineId: String,
+    selectedDate: String,
     routineRepository: RoutineRepository,
 ): ExerciseState {
     val exercises by routineRepository

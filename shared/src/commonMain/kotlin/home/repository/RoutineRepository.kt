@@ -18,6 +18,11 @@ interface RoutineRepository {
 
     fun observeExercises(routineId: String): Flow<List<Exercise>>
 
+    fun observeExercisesByDate(
+        routineId: String,
+        date: String
+    ): Flow<List<Exercise>>
+
     suspend fun upsertRoutine(routine: Routine)
 
     suspend fun deleteRoutine(id: String)
@@ -36,6 +41,7 @@ class SqlDelightRoutineRepository(
     private val routineQueries = fitForwardDatabase.routineQueries
     private val routineExerciseQueries = fitForwardDatabase.routineExerciseQueries
     private val historyQueries = fitForwardDatabase.routineHistoryQueries
+    private val historyExerciseQueries = fitForwardDatabase.routineHistoryExerciseQueries
 
     override fun observeRoutines(): Flow<List<Routine>> = routineQueries
         .selectAllRoutines()
@@ -67,6 +73,28 @@ class SqlDelightRoutineRepository(
                     )
                 }
             }
+
+    override fun observeExercisesByDate(routineId: String, date: String): Flow<List<Exercise>> {
+        return historyQueries
+            .selectRoutineHistoryByDate(date)
+            .asFlow()
+            .mapToList(coroutineDispatchers.io)
+            .map { historyEntries ->
+                historyEntries.flatMap { history ->
+                    historyExerciseQueries
+                        .selectExercisesForHistory(history.historyId)
+                        .executeAsList()
+                        .map { dbExercise ->
+                            Exercise(
+                                id = dbExercise.exerciseId,
+                                name = dbExercise.exerciseName,
+                                sets = dbExercise.sets,
+                                reps = dbExercise.reps
+                            )
+                        }
+                }
+            }
+    }
 
     override suspend fun upsertRoutine(routine: Routine) {
         withContext(coroutineDispatchers.io) {
@@ -101,6 +129,15 @@ class SqlDelightRoutineRepository(
                 notes = routineHistory.notes
             )
         }
+        // Insert exercise details for the history entry
+//        routineHistory.exercises.forEach { exercise ->
+//            historyExerciseQueries.insertRoutineHistoryExercise(
+//                historyId = historyId,
+//                exerciseId = exercise.id,
+//                sets = exercise.sets,
+//                reps = exercise.reps
+//            )
+//        }
     }
 
     override fun observeRoutinesByDate(date: String): Flow<List<Routine>> =

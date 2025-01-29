@@ -1,0 +1,36 @@
+CREATE TABLE IF NOT EXISTS routine_history_exercise (
+  history_id TEXT NOT NULL,
+  exercise_id TEXT NOT NULL,
+  sets INTEGER,
+  reps INTEGER,
+
+  PRIMARY KEY (history_id, exercise_id),
+
+  FOREIGN KEY (history_id) REFERENCES routine_history(id) ON DELETE CASCADE,
+  FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE
+);
+
+insertRoutineHistoryExercise:
+INSERT INTO routine_history_exercise (
+  history_id,
+  exercise_id,
+  sets,
+  reps
+)
+VALUES (
+  :historyId,
+  :exerciseId,
+  :sets,
+  :reps
+);
+
+selectExercisesForHistory:
+SELECT
+  exercise.id AS exerciseId,
+  exercise.name AS exerciseName,
+  routine_history_exercise.sets AS sets,
+  routine_history_exercise.reps AS reps
+FROM exercise
+JOIN routine_history_exercise
+  ON exercise.id = routine_history_exercise.exercise_id
+WHERE routine_history_exercise.history_id = :historyId;
