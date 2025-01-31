@@ -119,49 +119,49 @@ private suspend fun FitForwardDatabase.seedDatabase() {
     )
 
     // Link Routines with Exercises
-    routineExerciseQueries.insertRoutineExercise(
+    routineTemplateQueries.insertRoutineExercise(
         routineId = "1",
         exerciseId = "1",
         position = 1,
         sets = 3,
         reps = 10
     ) // Leg Day -> Squat
-    routineExerciseQueries.insertRoutineExercise(
+    routineTemplateQueries.insertRoutineExercise(
         routineId = "1",
         exerciseId = "2",
         position = 2,
         sets = 3,
         reps = 1
     ) // Leg Day -> Lunges
-    routineExerciseQueries.insertRoutineExercise(
+    routineTemplateQueries.insertRoutineExercise(
         routineId = "2",
         exerciseId = "4",
         position = 1,
         sets = 4,
         reps = 8
     ) // Push Day -> Bench Press
-    routineExerciseQueries.insertRoutineExercise(
+    routineTemplateQueries.insertRoutineExercise(
         routineId = "2",
         exerciseId = "5",
         position = 2,
         sets = 3,
         reps = 10,
     ) // Push Day -> Overhead Press
-    routineExerciseQueries.insertRoutineExercise(
+    routineTemplateQueries.insertRoutineExercise(
         routineId = "3",
         exerciseId = "3",
         position = 1,
         sets = 3,
         reps = 5
     ) // Pull Day -> Deadlift
-    routineExerciseQueries.insertRoutineExercise(
+    routineTemplateQueries.insertRoutineExercise(
         routineId = "3",
         exerciseId = "6",
         position = 2,
         sets = 3,
         reps = 8
     ) // Pull Day -> Pull-up
-    routineExerciseQueries.insertRoutineExercise(
+    routineTemplateQueries.insertRoutineExercise(
         routineId = "3",
         exerciseId = "7",
         position = 3,

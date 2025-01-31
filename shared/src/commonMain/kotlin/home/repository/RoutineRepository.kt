@@ -39,7 +39,7 @@ class SqlDelightRoutineRepository(
 ) : RoutineRepository {
 
     private val routineQueries = fitForwardDatabase.routineQueries
-    private val routineExerciseQueries = fitForwardDatabase.routineExerciseQueries
+    private val routineTemplates = fitForwardDatabase.routineTemplateQueries
     private val historyQueries = fitForwardDatabase.routineHistoryQueries
     private val historyExerciseQueries = fitForwardDatabase.routineHistoryExerciseQueries
 
@@ -52,7 +52,7 @@ class SqlDelightRoutineRepository(
                 Routine(
                     id = dbRoutine.routineId,
                     name = dbRoutine.routineName,
-                    exercisesCount = routineExerciseQueries
+                    exercisesCount = routineTemplates
                         .selectExercisesForRoutine(dbRoutine.routineId)
                         .executeAsList()
                         .count()
@@ -61,7 +61,7 @@ class SqlDelightRoutineRepository(
         }
 
     override fun observeExercises(routineId: String): Flow<List<Exercise>> =
-        routineExerciseQueries
+        routineTemplates
             .selectExercisesForRoutine(routineId)
             .asFlow()
             .mapToList(coroutineDispatchers.io)
@@ -88,8 +88,8 @@ class SqlDelightRoutineRepository(
                             Exercise(
                                 id = dbExercise.exerciseId,
                                 name = dbExercise.exerciseName,
-                                sets = dbExercise.sets,
-                                reps = dbExercise.reps
+//                                sets = dbExercise.sets,
+//                                reps = dbExercise.reps
                             )
                         }
                 }
@@ -125,7 +125,8 @@ class SqlDelightRoutineRepository(
                 id = idProvider.generate(),
                 routineId = routineHistory.routineId,
                 performedAt = routineHistory.performedAt,
-                durationSeconds = routineHistory.durationSeconds,
+                durationSeconds = null,
+//                durationSeconds = routineHistory.durationSeconds,
                 notes = routineHistory.notes
             )
         }
@@ -150,7 +151,7 @@ class SqlDelightRoutineRepository(
                     Routine(
                         id = it.routineId,
                         name = it.routineName,
-                        exercisesCount = routineExerciseQueries
+                        exercisesCount = routineTemplates
                             .selectExercisesForRoutine(it.routineId)
                             .executeAsList()
                             .count()

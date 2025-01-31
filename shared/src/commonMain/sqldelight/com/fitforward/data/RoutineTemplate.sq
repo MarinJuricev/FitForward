@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS routine_exercise (
+CREATE TABLE IF NOT EXISTS  routine_template (
   routine_id TEXT NOT NULL,
   exercise_id TEXT NOT NULL,
   position INTEGER NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS routine_exercise (
 );
 
 insertRoutineExercise:
-INSERT INTO routine_exercise (
+INSERT INTO  routine_template (
   routine_id,
   exercise_id,
   position,
@@ -29,21 +29,21 @@ VALUES (
 
 selectAllRoutineExercises:
 SELECT
-  routine_exercise.routine_id AS routineId,
-  routine_exercise.exercise_id AS exerciseId,
-  routine_exercise.position AS position,
-  routine_exercise.sets AS sets,
-  routine_exercise.reps AS reps
-FROM routine_exercise;
+   routine_template.routine_id AS routineId,
+   routine_template.exercise_id AS exerciseId,
+   routine_template.position AS position,
+   routine_template.sets AS sets,
+   routine_template.reps AS reps
+FROM  routine_template;
 
 selectExercisesForRoutine:
 SELECT
   exercise.id AS exerciseId,
   exercise.name AS exerciseName
 FROM exercise
-JOIN routine_exercise
-  ON exercise.id = routine_exercise.exercise_id
-WHERE routine_exercise.routine_id = :routineId;
+JOIN routine_template 
+  ON exercise.id =  routine_template.exercise_id
+WHERE  routine_template.routine_id = :routineId;
 
 selectRoutinesForExercise:
 SELECT
@@ -51,15 +51,15 @@ SELECT
   routine.name AS routineName,
   routine.created_at AS createdAt
 FROM routine
-JOIN routine_exercise
-  ON routine.id = routine_exercise.routine_id
-WHERE routine_exercise.exercise_id = :exerciseId;
+JOIN routine_template 
+  ON routine.id =  routine_template.routine_id
+WHERE  routine_template.exercise_id = :exerciseId;
 
 deleteRoutineExercise:
-DELETE FROM routine_exercise
+DELETE FROM routine_template 
 WHERE routine_id = :routineId
   AND exercise_id = :exerciseId;
 
 deleteRoutineExercisesForRoutine:
-DELETE FROM routine_exercise
+DELETE FROM routine_template 
 WHERE routine_id = :routineId;
