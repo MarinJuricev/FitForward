@@ -8,6 +8,7 @@ import home.presenter.ExercisePresenterFactory
 import home.presenter.ExerciseState
 import home.presenter.RoutinePickerPresenterFactory
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -31,13 +32,19 @@ class HomeViewModel(
 
     val routinePickerState = routinePickerPresenterFactory.create(viewModelScope)
 
-    val exerciseState = routinePickerState.flatMapLatest {
-        it.selectedRoutine?.let { selectedRoutine ->
-            exercisePresenterFactory.create(
-                coroutineScope = viewModelScope,
-                routineId = selectedRoutine.id,
-                date = "",
-            )
-        } ?: flowOf(ExerciseState())
-    }.stateIn(viewModelScope, SharingStarted.Lazily, ExerciseState())
+    val exerciseState: StateFlow<ExerciseState> = combine(
+        routinePickerState,
+        selectedDate,
+    ) { routinePickerState, selectedDate ->
+        val selectedRoutine = routinePickerState.selectedRoutine
+        if (selectedRoutine == null) return@combine flowOf(ExerciseState())
+
+        exercisePresenterFactory.create(
+            coroutineScope = viewModelScope,
+            routineId = selectedRoutine.id,
+            date = "",
+        )
+    }
+        .flatMapLatest { it }
+        .stateIn(viewModelScope, SharingStarted.Lazily, ExerciseState())
 }
