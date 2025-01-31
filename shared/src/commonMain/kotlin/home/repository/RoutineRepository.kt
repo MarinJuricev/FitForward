@@ -33,7 +33,7 @@ interface RoutineRepository {
 }
 
 class SqlDelightRoutineRepository(
-    fitForwardDatabase: FitForwardDatabase,
+    private val fitForwardDatabase: FitForwardDatabase,
     private val idProvider: IdProvider,
     private val coroutineDispatchers: AppCoroutineDispatchers,
 ) : RoutineRepository {
@@ -124,22 +124,26 @@ class SqlDelightRoutineRepository(
         routineHistory: RoutineHistory,
     ) {
         withContext(coroutineDispatchers.io) {
-            historyQueries.insertRoutineHistory(
-                id = idProvider.generate(),
-                routineId = routineHistory.routineId,
-                performedAt = routineHistory.performedAt,
-                durationSeconds = routineHistory.durationSeconds,
-                notes = routineHistory.notes
-            )
-        }
-        // Insert exercise details for the history entry
-        routineHistory.exercises.forEach { exercise ->
-            workoutExercises.insertRoutineHistoryExercise(
-                historyId = routineHistory.routineId,
-                exerciseId = exercise.id,
-                sets = exercise.sets,
-                reps = exercise.reps
-            )
+            val historyId = idProvider.generate()
+
+            fitForwardDatabase.transaction {
+                historyQueries.insertRoutineHistory(
+                    id = historyId,
+                    routineId = routineHistory.routineId,
+                    performedAt = routineHistory.performedAt,
+                    durationSeconds = routineHistory.durationSeconds,
+                    notes = routineHistory.notes
+                )
+
+                routineHistory.exercises.forEach { exercise ->
+                    workoutExercises.insertRoutineHistoryExercise(
+                        historyId = historyId,
+                        exerciseId = exercise.id,
+                        sets = exercise.sets,
+                        reps = exercise.reps
+                    )
+                }
+            }
         }
     }
 
