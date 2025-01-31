@@ -1,0 +1,71 @@
+CREATE TABLE IF NOT EXISTS workout_history (
+  id TEXT NOT NULL PRIMARY KEY,
+  routine_id TEXT NOT NULL,
+  performed_at TEXT NOT NULL,
+  duration_seconds INTEGER,
+  notes TEXT,
+
+  FOREIGN KEY (routine_id) REFERENCES routine(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_workout_history_routine_id ON workout_history(routine_id);
+CREATE INDEX idx_workout_history_performed_at ON workout_history(performed_at);
+
+insertRoutineHistory:
+INSERT INTO workout_history (
+  id,
+  routine_id,
+  performed_at,
+  duration_seconds,
+  notes
+)
+VALUES (
+  :id,
+:routineId,
+  :performedAt,
+:durationSeconds,
+    :notes
+);
+
+selectAllRoutineHistory:
+SELECT
+  workout_history.id AS historyId,
+  workout_history.routine_id AS routineId,
+  workout_history.performed_at AS performedAt,
+  workout_history.duration_seconds AS durationSeconds,
+  workout_history.notes AS notes
+FROM workout_history;
+
+selectRoutineHistoryByRoutineId:
+SELECT
+  workout_history.id AS historyId,
+  workout_history.routine_id AS routineId,
+  workout_history.performed_at AS performedAt,
+  workout_history.duration_seconds AS durationSeconds,
+  workout_history.notes AS notes
+FROM workout_history
+WHERE workout_history.routine_id = :routineId;
+
+selectRoutineHistoryByDate:
+SELECT
+  workout_history.id AS historyId,
+  workout_history.routine_id AS routineId,
+  workout_history.performed_at AS performedAt,
+  workout_history.duration_seconds AS durationSeconds,
+  workout_history.notes AS notes
+FROM workout_history
+WHERE workout_history.performed_at = :performedAt;
+
+selectRoutinesByDate:
+SELECT
+  routine.id AS routineId,
+  routine.name AS routineName,
+  routine.created_at AS createdAt
+FROM routine
+JOIN workout_history
+  ON workout_history.routine_id = routine.id
+WHERE workout_history.performed_at = :performedAt;
+
+deleteRoutineHistory:
+DELETE FROM workout_history
+WHERE id = :id;

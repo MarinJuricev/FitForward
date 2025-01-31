@@ -40,7 +40,7 @@ class SqlDelightRoutineRepository(
 
     private val routineQueries = fitForwardDatabase.routineQueries
     private val routineTemplates = fitForwardDatabase.routineTemplateQueries
-    private val historyQueries = fitForwardDatabase.routineHistoryQueries
+    private val historyQueries = fitForwardDatabase.workoutHistoryQueries
     private val workoutExercises = fitForwardDatabase.workoutExerciseQueries
 
     override fun observeRoutines(): Flow<List<Routine>> = routineQueries

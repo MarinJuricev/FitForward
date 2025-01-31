@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS workout_exercise (
 
   PRIMARY KEY (history_id, exercise_id),
 
-  FOREIGN KEY (history_id) REFERENCES routine_history(id) ON DELETE CASCADE,
+  FOREIGN KEY (history_id) REFERENCES workout_history(id) ON DELETE CASCADE,
   FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE
 );
 

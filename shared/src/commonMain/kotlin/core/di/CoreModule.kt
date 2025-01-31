@@ -170,21 +170,21 @@ private suspend fun FitForwardDatabase.seedDatabase() {
     ) // Pull Day -> Barbell Row
 
     // Insert Routine History
-    routineHistoryQueries.insertRoutineHistory(
+    workoutHistoryQueries.insertRoutineHistory(
         id = "1",
         routineId = "1",
         performedAt = "2023-10-25",
         durationSeconds = 3600,
         notes = "Great workout! Felt strong today."
     )
-    routineHistoryQueries.insertRoutineHistory(
+    workoutHistoryQueries.insertRoutineHistory(
         id = "2",
         routineId = "2",
         performedAt = "2023-10-26",
         durationSeconds = 2700,
         notes = "Struggled with bench press but improved overhead press."
     )
-    routineHistoryQueries.insertRoutineHistory(
+    workoutHistoryQueries.insertRoutineHistory(
         id = "3",
         routineId = "3",
         performedAt = "2023-10-27",
