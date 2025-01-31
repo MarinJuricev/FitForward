@@ -41,7 +41,7 @@ class SqlDelightRoutineRepository(
     private val routineQueries = fitForwardDatabase.routineQueries
     private val routineTemplates = fitForwardDatabase.routineTemplateQueries
     private val historyQueries = fitForwardDatabase.routineHistoryQueries
-    private val historyExerciseQueries = fitForwardDatabase.routineHistoryExerciseQueries
+    private val workoutExercises = fitForwardDatabase.workoutExerciseQueries
 
     override fun observeRoutines(): Flow<List<Routine>> = routineQueries
         .selectAllRoutines()
@@ -81,7 +81,7 @@ class SqlDelightRoutineRepository(
             .mapToList(coroutineDispatchers.io)
             .map { historyEntries ->
                 historyEntries.flatMap { history ->
-                    historyExerciseQueries
+                    workoutExercises
                         .selectExercisesForHistory(history.historyId)
                         .executeAsList()
                         .map { dbExercise ->
