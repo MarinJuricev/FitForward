@@ -58,6 +58,7 @@ kotlin {
             implementation(libs.molecule.runtime)
 
             implementation(libs.sqldelight.coroutines)
+            implementation(libs.sqldelight.primitive.adapters)
 
             api(libs.kotlinx.serialization.json)
             api(libs.kotlinx.coroutines.core)

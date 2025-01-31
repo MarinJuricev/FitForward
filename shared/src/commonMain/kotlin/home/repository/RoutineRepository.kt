@@ -119,26 +119,28 @@ class SqlDelightRoutineRepository(
         }
     }
 
-    override suspend fun insertRoutineHistory(routineHistory: RoutineHistory) {
+
+    override suspend fun insertRoutineHistory(
+        routineHistory: RoutineHistory,
+    ) {
         withContext(coroutineDispatchers.io) {
             historyQueries.insertRoutineHistory(
                 id = idProvider.generate(),
                 routineId = routineHistory.routineId,
                 performedAt = routineHistory.performedAt,
-                durationSeconds = null,
-//                durationSeconds = routineHistory.durationSeconds,
+                durationSeconds = routineHistory.durationSeconds,
                 notes = routineHistory.notes
             )
         }
         // Insert exercise details for the history entry
-//        routineHistory.exercises.forEach { exercise ->
-//            historyExerciseQueries.insertRoutineHistoryExercise(
-//                historyId = historyId,
-//                exerciseId = exercise.id,
-//                sets = exercise.sets,
-//                reps = exercise.reps
-//            )
-//        }
+        routineHistory.exercises.forEach { exercise ->
+            workoutExercises.insertRoutineHistoryExercise(
+                historyId = routineHistory.routineId,
+                exerciseId = exercise.id,
+                sets = exercise.sets,
+                reps = exercise.reps
+            )
+        }
     }
 
     override fun observeRoutinesByDate(date: String): Flow<List<Routine>> =

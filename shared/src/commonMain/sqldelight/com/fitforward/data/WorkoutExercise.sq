@@ -1,8 +1,10 @@
+import kotlin.Int;
+
 CREATE TABLE IF NOT EXISTS workout_exercise (
   history_id TEXT NOT NULL,
   exercise_id TEXT NOT NULL,
-  sets INTEGER,
-  reps INTEGER,
+  sets INTEGER AS Int,
+  reps INTEGER AS Int,
 
   PRIMARY KEY (history_id, exercise_id),
 

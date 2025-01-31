@@ -32,7 +32,7 @@ class HomeViewModel(
 
     val routinePickerState = routinePickerPresenterFactory.create(viewModelScope)
 
-    val exerciseState: StateFlow<ExerciseState> = combine(
+    val exerciseState = combine(
         routinePickerState,
         selectedDate,
     ) { routinePickerState, selectedDate ->

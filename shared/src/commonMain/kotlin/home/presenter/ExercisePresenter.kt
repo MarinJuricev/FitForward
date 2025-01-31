@@ -1,6 +1,7 @@
 package home.presenter
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import app.cash.molecule.RecompositionMode
@@ -43,6 +44,10 @@ internal fun ExercisePresenter(
     selectedDate: String,
     routineRepository: RoutineRepository,
 ): ExerciseState {
+    LaunchedEffect(selectedDate, routineId) {
+//        routineRepository.insertRoutineHistory()
+    }
+
     val exercises by routineRepository
         .observeExercises(routineId)
         .collectAsState(emptyList())

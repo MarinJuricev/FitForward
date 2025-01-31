@@ -2,11 +2,13 @@
 
 package core.di
 
+import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.cash.sqldelight.async.coroutines.synchronous
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
 import com.fitforward.data.FitForwardDatabase
+import com.fitforward.data.Workout_exercise
 import core.AppCoroutineDispatchers
 import core.DateProvider
 import core.IdProvider
@@ -54,6 +56,10 @@ val coreModule = module {
         FitForwardSchema.create(driver)
         FitForwardDatabase(
             driver = driver,
+            workout_exerciseAdapter = Workout_exercise.Adapter(
+                setsAdapter = IntColumnAdapter,
+                repsAdapter = IntColumnAdapter,
+            )
         )
     }
 }
@@ -64,7 +70,13 @@ object FitForwardSchema :
         FitForwardDatabase.Schema.create(driver)
 
         runBlocking {
-            FitForwardDatabase(driver).seedDatabase()
+            FitForwardDatabase(
+                driver = driver,
+                workout_exerciseAdapter = Workout_exercise.Adapter(
+                    setsAdapter = IntColumnAdapter,
+                    repsAdapter = IntColumnAdapter,
+                )
+            ).seedDatabase()
         }
         return QueryResult.Unit
     }
