@@ -15,6 +15,7 @@ import core.IdProvider
 import db.DriverFactory
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -40,7 +41,7 @@ val coreModule = module {
             // For now just live with this, we won't be utilizing the IO dispatcher
             // that often, we rely on the libraries that expose suspend functions to
             // to be main "safe"
-            io = Dispatchers.Default,
+            io = Dispatchers.IO,
             computation = Dispatchers.Default,
             main = Dispatchers.Main,
         )
