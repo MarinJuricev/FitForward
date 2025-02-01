@@ -44,7 +44,7 @@ class SqlDelightRoutineRepository(
     private val workoutExercises = fitForwardDatabase.workoutExerciseQueries
 
     override fun observeRoutines(): Flow<List<Routine>> = routineQueries
-        .selectAllRoutines()
+        .selectAllRoutinesWithExerciseCount()
         .asFlow()
         .mapToList(coroutineDispatchers.io)
         .map { dbRoutineList ->
@@ -52,12 +52,7 @@ class SqlDelightRoutineRepository(
                 Routine(
                     id = dbRoutine.routineId,
                     name = dbRoutine.routineName,
-                    exercisesCount = routineTemplates
-                        // If this becomes a bottle-neck, move it into the DB layer
-                        // do a JOIN and return the count
-                        .selectExercisesForRoutine(dbRoutine.routineId)
-                        .executeAsList()
-                        .count()
+                    exercisesCount = dbRoutine.exerciseCount.toInt()
                 )
             }
         }

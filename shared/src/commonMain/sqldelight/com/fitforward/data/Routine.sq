@@ -21,6 +21,15 @@ SELECT
   routine.created_at AS createdAt
 FROM routine;
 
+selectAllRoutinesWithExerciseCount:
+SELECT
+  routine.id AS routineId,
+  routine.name AS routineName,
+  COUNT(routine_template.exercise_id) AS exerciseCount
+FROM routine
+LEFT JOIN routine_template ON routine.id = routine_template.routine_id
+GROUP BY routine.id, routine.name;
+
 selectRoutineById:
 SELECT
   routine.id AS routineId,
