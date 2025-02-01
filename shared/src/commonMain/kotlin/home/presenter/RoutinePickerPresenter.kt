@@ -5,7 +5,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
@@ -32,16 +31,11 @@ fun Routine.toRoutineInfo(
     exerciseCount = exercisesCount,
 )
 
-fun RoutineInfo.toRoutine() = Routine(
-    id = id,
-    name = name,
-    exercisesCount = exerciseCount,
-)
-
 data class RoutinePickerState(
-    val routines: List<RoutineInfo>,
+    val routines: List<RoutineInfo> = emptyList(),
     val selectedRoutine: RoutineInfo? = null,
-    val onRoutineEvent: (RoutinePickerEvent) -> Unit,
+    val selectedDate: String = "",
+    val onRoutineEvent: (RoutinePickerEvent) -> Unit = {},
 )
 
 data class RoutineInfo(
@@ -57,9 +51,11 @@ class RoutinePickerPresenterFactory(
 ) {
 
     fun create(
-        coroutineScope: CoroutineScope
+        coroutineScope: CoroutineScope,
+        selectedDate: String,
     ): StateFlow<RoutinePickerState> = coroutineScope.launchMolecule(RecompositionMode.Immediate) {
         RoutinePickerPresenter(
+            selectedDate = selectedDate,
             routineRepository = routineRepository
         )
     }
@@ -67,8 +63,8 @@ class RoutinePickerPresenterFactory(
 
 @Composable
 internal fun RoutinePickerPresenter(
+    selectedDate: String,
     routineRepository: RoutineRepository,
-    coroutineScope: CoroutineScope = rememberCoroutineScope()
 ): RoutinePickerState {
     val availableRoutines by routineRepository
         .observeRoutines()
@@ -79,6 +75,7 @@ internal fun RoutinePickerPresenter(
     return RoutinePickerState(
         routines = availableRoutines,
         selectedRoutine = selectedRoutine,
+        selectedDate = selectedDate,
         onRoutineEvent = { event ->
             when (event) {
                 is RoutineSelected -> {

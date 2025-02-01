@@ -7,11 +7,10 @@ import home.presenter.CalendarPresenterFactory
 import home.presenter.ExerciseByDatePresenterFactory
 import home.presenter.ExerciseState
 import home.presenter.RoutinePickerPresenterFactory
+import home.presenter.RoutinePickerState
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.datetime.LocalDate
@@ -29,18 +28,18 @@ class HomeViewModel(
         .map(LocalDate::toDayMonthYear)
         .stateIn(viewModelScope, SharingStarted.Lazily, "")
 
-    val routinePickerState = routinePickerPresenterFactory.create(viewModelScope)
+    val routinePickerState = selectedDate.flatMapLatest { selectedDate ->
+        routinePickerPresenterFactory.create(
+            selectedDate = selectedDate,
+            coroutineScope = viewModelScope
+        )
+    }.stateIn(viewModelScope, SharingStarted.Lazily, RoutinePickerState())
 
-    val exerciseState = combine(
-        routinePickerState,
-        selectedDate,
-    ) { routinePickerState, selectedDate ->
+    val exerciseState = routinePickerState.flatMapLatest { routinePickerState ->
         exerciseByDatePresenterFactory.create(
             coroutineScope = viewModelScope,
             routineId = routinePickerState.selectedRoutine?.id,
-            date = selectedDate,
+            date = routinePickerState.selectedDate,
         )
-    }
-        .flatMapLatest { it }
-        .stateIn(viewModelScope, SharingStarted.Lazily, ExerciseState())
+    }.stateIn(viewModelScope, SharingStarted.Lazily, ExerciseState())
 }
