@@ -48,22 +48,22 @@ internal fun ExercisesByDatePresenter(
 ): ExerciseState {
     LaunchedEffect(selectedDate, routineId) {
         if (routineId == null) return@LaunchedEffect
-        routineRepository.upsertRoutineHistory(
-            RoutineHistory(
-                routineId = routineId,
-                performedAt = selectedDate,
-                exercises = routineRepository
-                    .observeExercises(routineId)
-                    .firstOrNull()
-                    .orEmpty(),
-            )
+
+        val routineHistory = RoutineHistory(
+            routineId = routineId,
+            performedAt = selectedDate,
+            exercises = routineRepository
+                .observeExercises(routineId)
+                .firstOrNull()
+                .orEmpty(),
         )
+
+        routineRepository.upsertRoutineHistory(routineHistory)
     }
 
     val exercises by routineRepository
         .observeWorkoutHistoryByDate(selectedDate)
         .collectAsState(emptyList())
-
 
     return ExerciseState(
         exercises = exercises,

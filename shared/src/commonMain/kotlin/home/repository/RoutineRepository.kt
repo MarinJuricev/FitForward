@@ -19,6 +19,8 @@ interface RoutineRepository {
 
     suspend fun upsertRoutineHistory(routineHistory: RoutineHistory)
 
+    suspend fun deleteRoutineHistory(routineHistory: RoutineHistory)
+
     fun observeRoutinesByDate(date: String): Flow<List<Routine>>
 }
 

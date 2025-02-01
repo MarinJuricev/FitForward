@@ -37,22 +37,21 @@ class SqlDelightRoutineRepository(
             }
         }
 
-    override fun observeExercises(routineId: String): Flow<List<Exercise>> =
-        routineTemplatesQueries
-            .selectExercisesForRoutine(routineId)
-            .asFlow()
-            .mapToList(coroutineDispatchers.io)
-            .map { dbExercises ->
-                dbExercises.map {
-                    Exercise(
-                        id = it.exerciseId,
-                        name = it.exerciseName,
-                    )
-                }
+    override fun observeExercises(routineId: String): Flow<List<Exercise>> = routineTemplatesQueries
+        .selectExercisesForRoutine(routineId)
+        .asFlow()
+        .mapToList(coroutineDispatchers.io)
+        .map { dbExercises ->
+            dbExercises.map {
+                Exercise(
+                    id = it.exerciseId,
+                    name = it.exerciseName,
+                )
             }
+        }
 
-    override fun observeWorkoutHistoryByDate(date: String): Flow<List<Exercise>> {
-        return workoutHistoryQueries
+    override fun observeWorkoutHistoryByDate(date: String): Flow<List<Exercise>> =
+        workoutHistoryQueries
             .selectRoutineHistoryByDate(date)
             .asFlow()
             .mapToList(coroutineDispatchers.io)
@@ -71,50 +70,48 @@ class SqlDelightRoutineRepository(
                         }
                 }
             }
+
+    override suspend fun upsertRoutine(routine: Routine) = withContext(coroutineDispatchers.io) {
+        routineQueries.upsertRoutine(
+            id = routine.id,
+            name = routine.name,
+        )
     }
 
-    override suspend fun upsertRoutine(routine: Routine) {
-        withContext(coroutineDispatchers.io) {
-            routineQueries.upsertRoutine(
-                id = routine.id,
-                name = routine.name,
-            )
-        }
-    }
-
-    override suspend fun deleteRoutine(id: String) {
-        withContext(coroutineDispatchers.io) {
-            routineQueries.deleteRoutine(id)
-        }
+    override suspend fun deleteRoutine(id: String) = withContext(coroutineDispatchers.io) {
+        routineQueries.deleteRoutine(id)
     }
 
 
     override suspend fun upsertRoutineHistory(
         routineHistory: RoutineHistory,
-    ) {
-        withContext(coroutineDispatchers.io) {
-            val historyId = idProvider.generate()
+    ) = withContext(coroutineDispatchers.io) {
+        val historyId = routineHistory.id
 
-            fitForwardDatabase.transaction {
-                workoutHistoryQueries.upsertRoutineHistory(
-                    id = historyId,
-                    routineId = routineHistory.routineId,
-                    performedAt = routineHistory.performedAt,
-                    durationSeconds = routineHistory.durationSeconds,
-                    notes = routineHistory.notes
+        fitForwardDatabase.transaction {
+            workoutHistoryQueries.upsertRoutineHistory(
+                id = historyId,
+                routineId = routineHistory.routineId,
+                performedAt = routineHistory.performedAt,
+                durationSeconds = routineHistory.durationSeconds,
+                notes = routineHistory.notes
+            )
+
+            routineHistory.exercises.forEach { exercise ->
+                workoutExercisesQueries.upsertRoutineHistoryExercise(
+                    historyId = historyId,
+                    exerciseId = exercise.id,
+                    sets = exercise.sets,
+                    reps = exercise.reps
                 )
-
-                routineHistory.exercises.forEach { exercise ->
-                    workoutExercisesQueries.upsertRoutineHistoryExercise(
-                        historyId = historyId,
-                        exerciseId = exercise.id,
-                        sets = exercise.sets,
-                        reps = exercise.reps
-                    )
-                }
             }
         }
     }
+
+    override suspend fun deleteRoutineHistory(routineHistory: RoutineHistory) =
+        withContext(coroutineDispatchers.io) {
+            workoutHistoryQueries.deleteRoutineHistory(id = routineHistory.id)
+        }
 
     override fun observeRoutinesByDate(date: String): Flow<List<Routine>> =
         workoutHistoryQueries

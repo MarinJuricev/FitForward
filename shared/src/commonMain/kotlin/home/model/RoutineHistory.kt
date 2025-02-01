@@ -6,4 +6,6 @@ data class RoutineHistory(
     val exercises: List<Exercise>,
     val durationSeconds: Long? = null,
     val notes: String? = null,
-)
+) {
+    val id get() = "$routineId-$performedAt"
+}
