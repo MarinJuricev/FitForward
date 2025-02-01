@@ -2,7 +2,7 @@ package home.di
 
 import home.HomeViewModel
 import home.presenter.CalendarPresenterFactory
-import home.presenter.ExercisePresenterFactory
+import home.presenter.ExerciseByDatePresenterFactory
 import home.presenter.RoutinePickerPresenterFactory
 import home.repository.RoutineRepository
 import home.repository.SqlDelightRoutineRepository
@@ -15,6 +15,6 @@ val homeModule = module {
     viewModelOf(::HomeViewModel)
     factoryOf(::CalendarPresenterFactory)
     factoryOf(::RoutinePickerPresenterFactory)
-    factoryOf(::ExercisePresenterFactory)
+    factoryOf(::ExerciseByDatePresenterFactory)
     factoryOf(::SqlDelightRoutineRepository) bind RoutineRepository::class
 }

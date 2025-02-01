@@ -53,6 +53,8 @@ class SqlDelightRoutineRepository(
                     id = dbRoutine.routineId,
                     name = dbRoutine.routineName,
                     exercisesCount = routineTemplates
+                        // If this becomes a bottle-neck, move it into the DB layer
+                        // do a JOIN and return the count
                         .selectExercisesForRoutine(dbRoutine.routineId)
                         .executeAsList()
                         .count()
@@ -88,8 +90,8 @@ class SqlDelightRoutineRepository(
                             Exercise(
                                 id = dbExercise.exerciseId,
                                 name = dbExercise.exerciseName,
-//                                sets = dbExercise.sets,
-//                                reps = dbExercise.reps
+                                sets = dbExercise.sets,
+                                reps = dbExercise.reps
                             )
                         }
                 }

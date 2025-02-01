@@ -4,11 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import core.date.toDayMonthYear
 import home.presenter.CalendarPresenterFactory
-import home.presenter.ExercisePresenterFactory
+import home.presenter.ExerciseByDatePresenterFactory
 import home.presenter.ExerciseState
 import home.presenter.RoutinePickerPresenterFactory
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -20,7 +19,7 @@ import kotlinx.datetime.LocalDate
 class HomeViewModel(
     calendarPresenterFactory: CalendarPresenterFactory,
     routinePickerPresenterFactory: RoutinePickerPresenterFactory,
-    exercisePresenterFactory: ExercisePresenterFactory,
+    exerciseByDatePresenterFactory: ExerciseByDatePresenterFactory,
 ) : ViewModel() {
 
     val calendarState = calendarPresenterFactory.create(viewModelScope)
@@ -39,10 +38,10 @@ class HomeViewModel(
         val selectedRoutine = routinePickerState.selectedRoutine
         if (selectedRoutine == null) return@combine flowOf(ExerciseState())
 
-        exercisePresenterFactory.create(
+        exerciseByDatePresenterFactory.create(
             coroutineScope = viewModelScope,
-            routineId = selectedRoutine.id,
-            date = "",
+            routine = selectedRoutine,
+            date = selectedDate,
         )
     }
         .flatMapLatest { it }
