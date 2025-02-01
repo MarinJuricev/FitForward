@@ -88,93 +88,93 @@ private suspend fun FitForwardDatabase.seedDatabase() {
     if (routineQueries.selectAllRoutines().executeAsList().isNotEmpty()) return
 
     // Insert Routines
-    routineQueries.insertRoutine(
+    routineQueries.upsertRoutine(
         id = "1",
         name = "Leg Day",
     )
-    routineQueries.insertRoutine(
+    routineQueries.upsertRoutine(
         id = "2",
         name = "Push Day",
     )
-    routineQueries.insertRoutine(
+    routineQueries.upsertRoutine(
         id = "3",
         name = "Pull Day",
     )
 
-    // Insert Exercises
-    exerciseQueries.insertExercise(
+    // upsert Exercises
+    exerciseQueries.upsertExercise(
         id = "1",
         name = "Squat",
     )
-    exerciseQueries.insertExercise(
+    exerciseQueries.upsertExercise(
         id = "2",
         name = "Lunges"
     )
-    exerciseQueries.insertExercise(
+    exerciseQueries.upsertExercise(
         id = "3",
         name = "Deadlift"
     )
-    exerciseQueries.insertExercise(
+    exerciseQueries.upsertExercise(
         id = "4",
         name = "Bench Press"
     )
-    exerciseQueries.insertExercise(
+    exerciseQueries.upsertExercise(
         id = "5",
         name = "Overhead Press"
     )
-    exerciseQueries.insertExercise(
+    exerciseQueries.upsertExercise(
         id = "6",
         name = "Pull-up"
     )
-    exerciseQueries.insertExercise(
+    exerciseQueries.upsertExercise(
         id = "7",
         name = "Barbell Row"
     )
 
     // Link Routines with Exercises
-    routineTemplateQueries.insertRoutineExercise(
+    routineTemplateQueries.upsertRoutineExercise(
         routineId = "1",
         exerciseId = "1",
         position = 1,
         sets = 3,
         reps = 10
     ) // Leg Day -> Squat
-    routineTemplateQueries.insertRoutineExercise(
+    routineTemplateQueries.upsertRoutineExercise(
         routineId = "1",
         exerciseId = "2",
         position = 2,
         sets = 3,
         reps = 1
     ) // Leg Day -> Lunges
-    routineTemplateQueries.insertRoutineExercise(
+    routineTemplateQueries.upsertRoutineExercise(
         routineId = "2",
         exerciseId = "4",
         position = 1,
         sets = 4,
         reps = 8
     ) // Push Day -> Bench Press
-    routineTemplateQueries.insertRoutineExercise(
+    routineTemplateQueries.upsertRoutineExercise(
         routineId = "2",
         exerciseId = "5",
         position = 2,
         sets = 3,
         reps = 10,
     ) // Push Day -> Overhead Press
-    routineTemplateQueries.insertRoutineExercise(
+    routineTemplateQueries.upsertRoutineExercise(
         routineId = "3",
         exerciseId = "3",
         position = 1,
         sets = 3,
         reps = 5
     ) // Pull Day -> Deadlift
-    routineTemplateQueries.insertRoutineExercise(
+    routineTemplateQueries.upsertRoutineExercise(
         routineId = "3",
         exerciseId = "6",
         position = 2,
         sets = 3,
         reps = 8
     ) // Pull Day -> Pull-up
-    routineTemplateQueries.insertRoutineExercise(
+    routineTemplateQueries.upsertRoutineExercise(
         routineId = "3",
         exerciseId = "7",
         position = 3,
@@ -182,22 +182,22 @@ private suspend fun FitForwardDatabase.seedDatabase() {
         reps = 10,
     ) // Pull Day -> Barbell Row
 
-    // Insert Routine History
-    workoutHistoryQueries.insertRoutineHistory(
+    // upsert Routine History
+    workoutHistoryQueries.upsertRoutineHistory(
         id = "1",
         routineId = "1",
         performedAt = "2023-10-25",
         durationSeconds = 3600,
         notes = "Great workout! Felt strong today."
     )
-    workoutHistoryQueries.insertRoutineHistory(
+    workoutHistoryQueries.upsertRoutineHistory(
         id = "2",
         routineId = "2",
         performedAt = "2023-10-26",
         durationSeconds = 2700,
         notes = "Struggled with bench press but improved overhead press."
     )
-    workoutHistoryQueries.insertRoutineHistory(
+    workoutHistoryQueries.upsertRoutineHistory(
         id = "3",
         routineId = "3",
         performedAt = "2023-10-27",

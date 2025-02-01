@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS workout_exercise (
   FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE
 );
 
-insertRoutineHistoryExercise:
+upsertRoutineHistoryExercise:
 INSERT INTO workout_exercise (
   history_id,
   exercise_id,
@@ -24,7 +24,10 @@ VALUES (
   :exerciseId,
   :sets,
   :reps
-);
+)
+ON CONFLICT(history_id, exercise_id) DO UPDATE SET
+  sets = excluded.sets,
+  reps = excluded.reps;
 
 selectExercisesForHistory:
 SELECT

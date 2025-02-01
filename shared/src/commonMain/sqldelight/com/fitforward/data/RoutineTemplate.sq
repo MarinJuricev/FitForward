@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS  routine_template (
   FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE
 );
 
-insertRoutineExercise:
-INSERT INTO  routine_template (
+upsertRoutineExercise:
+INSERT INTO routine_template (
   routine_id,
   exercise_id,
   position,
@@ -22,10 +22,14 @@ INSERT INTO  routine_template (
 VALUES (
   :routineId,
   :exerciseId,
- :position,
+  :position,
   :sets,
   :reps
-);
+)
+ON CONFLICT(routine_id, exercise_id) DO UPDATE SET
+  position = excluded.position,
+  sets = excluded.sets,
+  reps = excluded.reps;
 
 selectAllRoutineExercises:
 SELECT

@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS exercise (
   name TEXT NOT NULL UNIQUE
 );
 
-insertExercise:
+upsertExercise:
 INSERT INTO exercise (
   id,
   name
@@ -11,7 +11,9 @@ INSERT INTO exercise (
 VALUES (
   :id,
   :name
-);
+)
+ON CONFLICT(id) DO UPDATE SET
+  name = excluded.name;
 
 selectAllExercises:
 SELECT

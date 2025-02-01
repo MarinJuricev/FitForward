@@ -97,7 +97,7 @@ sqldelight {
 
             // Explicitly set the dialect to support ON CONFLICT, see if there are newer version's
             // and if this supports older API versions
-//            dialect("sqlite:3.25")
+            dialect(libs.sqldelight.dialect.sqlite)
 
             // directory where .db schema files should be stored, relative to the project root
             // use ./gradlew data:tasks to list all available tasks for generating schema

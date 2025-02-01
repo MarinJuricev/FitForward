@@ -1,6 +1,7 @@
 package home.presenter
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,6 +15,7 @@ import home.presenter.RoutinePickerEvent.RoutineSelected
 import home.repository.RoutineRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 
 sealed interface RoutinePickerEvent {
@@ -71,6 +73,14 @@ internal fun RoutinePickerPresenter(
         .map { routine -> routine.map(Routine::toRoutineInfo) }
         .collectAsState(emptyList())
     var selectedRoutine by remember { mutableStateOf<RoutineInfo?>(null) }
+
+    LaunchedEffect(selectedDate) {
+        routineRepository
+            .observeRoutinesByDate(selectedDate)
+            .collectLatest {
+                selectedRoutine = it.firstOrNull()?.toRoutineInfo()
+            }
+    }
 
     return RoutinePickerState(
         routines = availableRoutines,

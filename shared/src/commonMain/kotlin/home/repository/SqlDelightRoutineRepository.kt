@@ -75,18 +75,10 @@ class SqlDelightRoutineRepository(
 
     override suspend fun upsertRoutine(routine: Routine) {
         withContext(coroutineDispatchers.io) {
-            val existing = routineQueries.selectRoutineById(routine.id).executeAsOneOrNull()
-            if (existing == null) {
-                routineQueries.insertRoutine(
-                    id = routine.id,
-                    name = routine.name,
-                )
-            } else {
-                routineQueries.updateRoutine(
-                    id = routine.id,
-                    name = routine.name,
-                )
-            }
+            routineQueries.upsertRoutine(
+                id = routine.id,
+                name = routine.name,
+            )
         }
     }
 
@@ -97,14 +89,14 @@ class SqlDelightRoutineRepository(
     }
 
 
-    override suspend fun insertRoutineHistory(
+    override suspend fun upsertRoutineHistory(
         routineHistory: RoutineHistory,
     ) {
         withContext(coroutineDispatchers.io) {
             val historyId = idProvider.generate()
 
             fitForwardDatabase.transaction {
-                workoutHistoryQueries.insertRoutineHistory(
+                workoutHistoryQueries.upsertRoutineHistory(
                     id = historyId,
                     routineId = routineHistory.routineId,
                     performedAt = routineHistory.performedAt,
@@ -113,7 +105,7 @@ class SqlDelightRoutineRepository(
                 )
 
                 routineHistory.exercises.forEach { exercise ->
-                    workoutExercisesQueries.insertRoutineHistoryExercise(
+                    workoutExercisesQueries.upsertRoutineHistoryExercise(
                         historyId = historyId,
                         exerciseId = exercise.id,
                         sets = exercise.sets,
