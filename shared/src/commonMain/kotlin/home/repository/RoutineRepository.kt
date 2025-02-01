@@ -11,10 +11,7 @@ interface RoutineRepository {
 
     fun observeExercises(routineId: String): Flow<List<Exercise>>
 
-    fun observeExercisesByDate(
-        routineId: String,
-        date: String
-    ): Flow<List<Exercise>>
+    fun observeWorkoutHistoryByDate(date: String): Flow<List<Exercise>>
 
     suspend fun upsertRoutine(routine: Routine)
 

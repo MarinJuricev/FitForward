@@ -35,12 +35,9 @@ class HomeViewModel(
         routinePickerState,
         selectedDate,
     ) { routinePickerState, selectedDate ->
-        val selectedRoutine = routinePickerState.selectedRoutine
-        if (selectedRoutine == null) return@combine flowOf(ExerciseState())
-
         exerciseByDatePresenterFactory.create(
             coroutineScope = viewModelScope,
-            routine = selectedRoutine,
+            routineId = routinePickerState.selectedRoutine?.id,
             date = selectedDate,
         )
     }

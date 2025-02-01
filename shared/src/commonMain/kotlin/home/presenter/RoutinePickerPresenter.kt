@@ -85,9 +85,6 @@ internal fun RoutinePickerPresenter(
                     selectedRoutine =
                         if (event.routine == selectedRoutine) null
                         else event.routine
-//                    routineRepository.insertRoutineHistory(
-//
-//                    )
                 }
 
                 is NavigateToRoutines -> {

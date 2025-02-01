@@ -11,6 +11,7 @@ import home.model.RoutineHistory
 import home.repository.RoutineRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 
 sealed interface ExerciseEvent {
     data class OnExerciseClicked(val exercise: Exercise) : ExerciseEvent
@@ -27,12 +28,12 @@ class ExerciseByDatePresenterFactory(
 
     fun create(
         coroutineScope: CoroutineScope,
-        routine: RoutineInfo,
+        routineId: String?,
         date: String,
     ): StateFlow<ExerciseState> = coroutineScope
         .launchMolecule(RecompositionMode.Immediate) {
             ExercisesByDatePresenter(
-                routine = routine,
+                routineId = routineId,
                 selectedDate = date,
                 routineRepository = routineRepository,
             )
@@ -41,23 +42,25 @@ class ExerciseByDatePresenterFactory(
 
 @Composable
 internal fun ExercisesByDatePresenter(
-    routine: RoutineInfo,
+    routineId: String?,
     selectedDate: String,
     routineRepository: RoutineRepository,
 ): ExerciseState {
-    val exercises by routineRepository
-        .observeExercises(routine.id)
-        .collectAsState(emptyList())
-
-    LaunchedEffect(selectedDate, routine.id) {
+    LaunchedEffect(selectedDate, routineId) {
+        if (routineId == null) return@LaunchedEffect
         routineRepository.insertRoutineHistory(
             RoutineHistory(
-                routineId = routine.id,
+                routineId = routineId,
                 performedAt = selectedDate,
-                exercises = exercises,
+                exercises = routineRepository.observeExercises(routineId).firstOrNull().orEmpty(),
             )
         )
     }
+
+    val exercises by routineRepository
+        .observeWorkoutHistoryByDate(selectedDate)
+        .collectAsState(emptyList())
+
 
     return ExerciseState(
         exercises = exercises,

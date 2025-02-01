@@ -19,9 +19,9 @@ class SqlDelightRoutineRepository(
 ) : RoutineRepository {
 
     private val routineQueries = fitForwardDatabase.routineQueries
-    private val routineTemplates = fitForwardDatabase.routineTemplateQueries
-    private val historyQueries = fitForwardDatabase.workoutHistoryQueries
-    private val workoutExercises = fitForwardDatabase.workoutExerciseQueries
+    private val routineTemplatesQueries = fitForwardDatabase.routineTemplateQueries
+    private val workoutHistoryQueries = fitForwardDatabase.workoutHistoryQueries
+    private val workoutExercisesQueries = fitForwardDatabase.workoutExerciseQueries
 
     override fun observeRoutines(): Flow<List<Routine>> = routineQueries
         .selectAllRoutinesWithExerciseCount()
@@ -38,7 +38,7 @@ class SqlDelightRoutineRepository(
         }
 
     override fun observeExercises(routineId: String): Flow<List<Exercise>> =
-        routineTemplates
+        routineTemplatesQueries
             .selectExercisesForRoutine(routineId)
             .asFlow()
             .mapToList(coroutineDispatchers.io)
@@ -51,14 +51,14 @@ class SqlDelightRoutineRepository(
                 }
             }
 
-    override fun observeExercisesByDate(routineId: String, date: String): Flow<List<Exercise>> {
-        return historyQueries
+    override fun observeWorkoutHistoryByDate(date: String): Flow<List<Exercise>> {
+        return workoutHistoryQueries
             .selectRoutineHistoryByDate(date)
             .asFlow()
             .mapToList(coroutineDispatchers.io)
             .map { historyEntries ->
                 historyEntries.flatMap { history ->
-                    workoutExercises
+                    workoutExercisesQueries
                         .selectExercisesForHistory(history.historyId)
                         .executeAsList()
                         .map { dbExercise ->
@@ -104,7 +104,7 @@ class SqlDelightRoutineRepository(
             val historyId = idProvider.generate()
 
             fitForwardDatabase.transaction {
-                historyQueries.insertRoutineHistory(
+                workoutHistoryQueries.insertRoutineHistory(
                     id = historyId,
                     routineId = routineHistory.routineId,
                     performedAt = routineHistory.performedAt,
@@ -113,7 +113,7 @@ class SqlDelightRoutineRepository(
                 )
 
                 routineHistory.exercises.forEach { exercise ->
-                    workoutExercises.insertRoutineHistoryExercise(
+                    workoutExercisesQueries.insertRoutineHistoryExercise(
                         historyId = historyId,
                         exerciseId = exercise.id,
                         sets = exercise.sets,
@@ -125,7 +125,7 @@ class SqlDelightRoutineRepository(
     }
 
     override fun observeRoutinesByDate(date: String): Flow<List<Routine>> =
-        historyQueries
+        workoutHistoryQueries
             .selectRoutinesByDate(date)
             .asFlow()
             .mapToList(coroutineDispatchers.io)
@@ -134,7 +134,7 @@ class SqlDelightRoutineRepository(
                     Routine(
                         id = it.routineId,
                         name = it.routineName,
-                        exercisesCount = routineTemplates
+                        exercisesCount = routineTemplatesQueries
                             .selectExercisesForRoutine(it.routineId)
                             .executeAsList()
                             .count()
