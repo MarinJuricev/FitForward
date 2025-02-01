@@ -49,15 +49,15 @@ internal fun ExercisesByDatePresenter(
         .observeExercises(routine.id)
         .collectAsState(emptyList())
 
-//    LaunchedEffect(selectedDate, routine.id) {
-//        routineRepository.insertRoutineHistory(
-//            RoutineHistory(
-//                routineId = routine.id,
-//                performedAt = selectedDate,
-//                exercises = exercises,
-//            )
-//        )
-//    }
+    LaunchedEffect(selectedDate, routine.id) {
+        routineRepository.insertRoutineHistory(
+            RoutineHistory(
+                routineId = routine.id,
+                performedAt = selectedDate,
+                exercises = exercises,
+            )
+        )
+    }
 
     return ExerciseState(
         exercises = exercises,
