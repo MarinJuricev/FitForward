@@ -108,9 +108,10 @@ class SqlDelightRoutineRepository(
         }
     }
 
-    override suspend fun deleteRoutineHistory(routineHistory: RoutineHistory) =
+    override suspend fun deleteWorkoutExerciseByDate(date: String) =
         withContext(coroutineDispatchers.io) {
-            workoutHistoryQueries.deleteRoutineHistory(id = routineHistory.id)
+            workoutHistoryQueries.deleteRoutineHistoryByDate(date)
+            workoutExercisesQueries.deleteWorkoutExercisesForHistoryByDate(performedAt = date)
         }
 
     override fun observeRoutinesByDate(date: String): Flow<List<Routine>> =

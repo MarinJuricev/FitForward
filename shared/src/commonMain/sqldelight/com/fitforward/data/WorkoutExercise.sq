@@ -39,3 +39,11 @@ FROM exercise
 JOIN workout_exercise
   ON exercise.id = workout_exercise.exercise_id
 WHERE workout_exercise.history_id = :historyId;
+
+deleteWorkoutExercisesForHistoryByDate:
+DELETE FROM workout_exercise
+WHERE history_id IN (
+  SELECT id
+  FROM workout_history
+  WHERE performed_at = :performedAt
+);

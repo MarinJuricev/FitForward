@@ -10,13 +10,16 @@ import androidx.compose.runtime.setValue
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import home.model.Routine
+import home.model.RoutineHistory
 import home.presenter.RoutinePickerEvent.NavigateToRoutines
 import home.presenter.RoutinePickerEvent.RoutineSelected
 import home.repository.RoutineRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 sealed interface RoutinePickerEvent {
     data class RoutineSelected(val routine: RoutineInfo) : RoutinePickerEvent
@@ -36,7 +39,6 @@ fun Routine.toRoutineInfo(
 data class RoutinePickerState(
     val routines: List<RoutineInfo> = emptyList(),
     val selectedRoutine: RoutineInfo? = null,
-    val selectedDate: String = "",
     val onRoutineEvent: (RoutinePickerEvent) -> Unit = {},
 )
 
@@ -57,6 +59,7 @@ class RoutinePickerPresenterFactory(
         selectedDate: String,
     ): StateFlow<RoutinePickerState> = coroutineScope.launchMolecule(RecompositionMode.Immediate) {
         RoutinePickerPresenter(
+            coroutineScope = coroutineScope,
             selectedDate = selectedDate,
             routineRepository = routineRepository
         )
@@ -65,6 +68,7 @@ class RoutinePickerPresenterFactory(
 
 @Composable
 internal fun RoutinePickerPresenter(
+    coroutineScope: CoroutineScope,
     selectedDate: String,
     routineRepository: RoutineRepository,
 ): RoutinePickerState {
@@ -82,16 +86,24 @@ internal fun RoutinePickerPresenter(
             }
     }
 
+
     return RoutinePickerState(
         routines = availableRoutines,
         selectedRoutine = selectedRoutine,
-        selectedDate = selectedDate,
         onRoutineEvent = { event ->
             when (event) {
-                is RoutineSelected -> {
-                    selectedRoutine =
-                        if (event.routine == selectedRoutine) null
-                        else event.routine
+                is RoutineSelected -> coroutineScope.launch {
+                    val routineHistory = RoutineHistory(
+                        routineId = event.routine.id,
+                        performedAt = selectedDate,
+                        exercises = routineRepository
+                            .observeExercises(event.routine.id)
+                            .firstOrNull()
+                            .orEmpty(),
+                    )
+
+                    routineRepository.deleteWorkoutExerciseByDate(selectedDate)
+                    routineRepository.upsertRoutineHistory(routineHistory)
                 }
 
                 is NavigateToRoutines -> {

@@ -35,11 +35,10 @@ class HomeViewModel(
         )
     }.stateIn(viewModelScope, SharingStarted.Lazily, RoutinePickerState())
 
-    val exerciseState = routinePickerState.flatMapLatest { routinePickerState ->
+    val exerciseState = selectedDate.flatMapLatest { date ->
         exerciseByDatePresenterFactory.create(
             coroutineScope = viewModelScope,
-            routineId = routinePickerState.selectedRoutine?.id,
-            date = routinePickerState.selectedDate,
+            date = date,
         )
     }.stateIn(viewModelScope, SharingStarted.Lazily, ExerciseState())
 }
