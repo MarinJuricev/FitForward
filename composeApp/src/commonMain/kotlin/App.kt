@@ -7,6 +7,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,9 +21,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import design.FitForwardTheme
+import exercisedetail.ExerciseDetailRoute
+import exercisedetail.ExerciseDetailsScreen
 import home.HomeRoute
 import home.HomeScreen
 import home.HomeViewModel
+import home.presenter.ExerciseEffect
 import navigation.bottomItems
 import org.koin.compose.viewmodel.koinViewModel
 import profile.ProfileScreen
@@ -81,12 +85,26 @@ fun App(
                     val routinePickerState by homeViewModel.routinePickerState.collectAsState()
                     val exerciseState by homeViewModel.exerciseState.collectAsState()
 
+                    LaunchedEffect(Unit) {
+                        exerciseState.viewEffect.collect {
+                            when (it) {
+                                is ExerciseEffect.OnExerciseClicked -> navController.navigate(
+                                    ExerciseDetailRoute
+                                )
+                            }
+                        }
+                    }
+
                     HomeScreen(
                         selectedDate = selectedDate,
                         calendarState = calendarState,
                         routinePickerState = routinePickerState,
                         exerciseState = exerciseState,
                     )
+                }
+
+                composable<ExerciseDetailRoute> {
+                    ExerciseDetailsScreen()
                 }
 
                 composable<StatisticsScreen> {

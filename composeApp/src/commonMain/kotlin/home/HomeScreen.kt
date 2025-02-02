@@ -26,6 +26,7 @@ import home.components.LazyAPIs
 import home.components.RoutinePicker
 import home.model.Exercise
 import home.presenter.CalendarState
+import home.presenter.ExerciseEvent
 import home.presenter.ExerciseState
 import home.presenter.RoutinePickerState
 import kotlinx.serialization.Serializable
@@ -76,6 +77,7 @@ fun HomeScreen(
                         ExerciseItem(
                             modifier = Modifier,
                             exercise = exercise,
+                            onExerciseEvent = exerciseState.onExerciseEvent,
                         )
                     }
                 }
@@ -87,11 +89,15 @@ fun HomeScreen(
 @Composable
 private fun ExerciseItem(
     exercise: Exercise,
+    onExerciseEvent: (ExerciseEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     FitCard(
         modifier = modifier
-            .padding(horizontal = 4.dp)
+            .padding(horizontal = 4.dp),
+        onClick = {
+            onExerciseEvent(ExerciseEvent.OnExerciseClicked(exercise))
+        }
     ) {
         FitBodyMediumText(
             text = exercise.name,
