@@ -86,7 +86,6 @@ internal fun RoutinePickerPresenter(
             }
     }
 
-
     return RoutinePickerState(
         routines = availableRoutines,
         selectedRoutine = selectedRoutine,

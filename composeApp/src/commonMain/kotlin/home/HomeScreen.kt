@@ -91,7 +91,7 @@ private fun ExerciseItem(
 ) {
     FitCard(
         modifier = modifier
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = 4.dp)
     ) {
         FitBodyMediumText(
             text = exercise.name,
