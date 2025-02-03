@@ -89,7 +89,7 @@ fun App(
                         exerciseState.viewEffect.collect {
                             when (it) {
                                 is ExerciseEffect.OnExerciseClicked -> navController.navigate(
-                                    ExerciseDetailRoute
+                                    ExerciseDetailRoute(it.exercise.id)
                                 )
                             }
                         }

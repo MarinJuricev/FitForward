@@ -6,7 +6,9 @@ import kotlinx.serialization.Serializable
 import navigation.Route
 
 @Serializable
-object ExerciseDetailRoute : Route
+data class ExerciseDetailRoute(
+    val exerciseId: String,
+) : Route
 
 @Composable
 fun ExerciseDetailsScreen() {
