@@ -37,10 +37,6 @@ val coreModule = module {
     }
     factory {
         AppCoroutineDispatchers(
-//            io = ioDispatcher,
-            // For now just live with this, we won't be utilizing the IO dispatcher
-            // that often, we rely on the libraries that expose suspend functions to
-            // to be main "safe"
             io = Dispatchers.IO,
             computation = Dispatchers.Default,
             main = Dispatchers.Main,

@@ -61,8 +61,10 @@ kotlin {
 
             implementation(libs.sqldelight.coroutines)
             implementation(libs.sqldelight.primitive.adapters)
+            implementation(libs.arrow.coroutines)
 
             api(libs.kotlinx.serialization.json)
+            api(libs.arrow.core)
             api(libs.kotlinx.coroutines.core)
             api(libs.kotlinx.datetime)
         }
