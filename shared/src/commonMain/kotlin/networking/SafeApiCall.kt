@@ -1,7 +1,6 @@
 package networking
 
 import arrow.core.Either
-import arrow.fx.coroutines.parZip
 import io.ktor.client.plugins.ResponseException
 
 sealed interface NetworkError {
