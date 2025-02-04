@@ -38,8 +38,10 @@ kotlin {
     jvm()
 
     listOf(
-        iosX64(),
-        iosArm64(),
+//        iosX64(),
+//        iosArm64(),
+        // For now only build for one architecture to reduce the build
+        // later on expose custom tasks to build for each architecture
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
@@ -60,6 +62,8 @@ kotlin {
             implementation(libs.sqldelight.coroutines)
             implementation(libs.sqldelight.primitive.adapters)
 
+            implementation(libs.ktor.client.core)
+
             api(libs.kotlinx.serialization.json)
             api(libs.kotlinx.coroutines.core)
             api(libs.kotlinx.datetime)
@@ -67,10 +71,12 @@ kotlin {
 
         androidMain.dependencies {
             implementation(libs.sqldelight.android)
+            implementation(libs.ktor.client.okhttp)
         }
 
         nativeMain.dependencies {
             implementation(libs.sqldelight.native)
+            implementation(libs.ktor.client.darwin)
         }
     }
 }
