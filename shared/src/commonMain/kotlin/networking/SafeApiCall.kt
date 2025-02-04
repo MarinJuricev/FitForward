@@ -3,7 +3,7 @@ package networking
 import arrow.core.Either
 import io.ktor.client.plugins.ResponseException
 
-sealed interface NetworkError {
+internal sealed interface NetworkError {
 
     data class MappedError(
         val code: Int,
