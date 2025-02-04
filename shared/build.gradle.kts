@@ -62,21 +62,38 @@ kotlin {
             implementation(libs.sqldelight.coroutines)
             implementation(libs.sqldelight.primitive.adapters)
 
-            implementation(libs.ktor.client.core)
-
             api(libs.kotlinx.serialization.json)
             api(libs.kotlinx.coroutines.core)
             api(libs.kotlinx.datetime)
         }
 
-        androidMain.dependencies {
-            implementation(libs.sqldelight.android)
-            implementation(libs.ktor.client.okhttp)
+        val mobileMain by creating {
+            dependsOn(commonMain.get())
+            dependencies {
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.auth)
+                implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.ktor.client.kotlinx.json)
+                // Mobile-specific dependencies that are common to Android and iOS
+                // For example, shared networking or serialization libraries can be added here if needed
+                // (leave out server-specific dependencies)
+            }
         }
 
-        nativeMain.dependencies {
-            implementation(libs.sqldelight.native)
-            implementation(libs.ktor.client.darwin)
+        androidMain {
+            dependsOn(mobileMain)
+            dependencies {
+                implementation(libs.sqldelight.android)
+                implementation(libs.ktor.client.okhttp)
+            }
+        }
+
+        nativeMain {
+            dependsOn(mobileMain)
+            dependencies {
+                implementation(libs.sqldelight.native)
+                implementation(libs.ktor.client.darwin)
+            }
         }
     }
 }
