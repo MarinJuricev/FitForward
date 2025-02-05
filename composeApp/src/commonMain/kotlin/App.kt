@@ -22,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import design.FitForwardTheme
 import exercisedetail.ExerciseDetailRoute
+import exercisedetail.ExerciseDetailViewModel
 import exercisedetail.ExerciseDetailsScreen
 import home.HomeRoute
 import home.HomeScreen
@@ -104,6 +105,8 @@ fun App(
                 }
 
                 composable<ExerciseDetailRoute> {
+                    val exerciseDetailViewModel = koinViewModel<ExerciseDetailViewModel>()
+
                     ExerciseDetailsScreen()
                 }
 

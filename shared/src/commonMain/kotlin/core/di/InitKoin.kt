@@ -1,5 +1,6 @@
 package core.di
 
+import exercisedetail.di.exerciseDetailModule
 import home.di.homeModule
 import networking.networkModule
 import org.koin.core.context.startKoin
@@ -15,6 +16,7 @@ fun initKoin(
             networkModule,
             coreModule,
             homeModule,
+            exerciseDetailModule,
         )
     )
 }
