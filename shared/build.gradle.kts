@@ -56,8 +56,15 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.core.viewmodel)
 
+            //TODO: Move the mobile specific dependencies/classes into mobileMain sourceSet
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.molecule.runtime)
+
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.auth)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.client.kotlinx.json)
+            implementation(libs.ktor.client.logging)
 
             implementation(libs.sqldelight.coroutines)
             implementation(libs.sqldelight.primitive.adapters)
@@ -72,10 +79,6 @@ kotlin {
         val mobileMain by creating {
             dependsOn(commonMain.get())
             dependencies {
-                implementation(libs.ktor.client.core)
-                implementation(libs.ktor.client.auth)
-                implementation(libs.ktor.client.content.negotiation)
-                implementation(libs.ktor.client.kotlinx.json)
                 // Mobile-specific dependencies that are common to Android and iOS
                 // For example, shared networking or serialization libraries can be added here if needed
                 // (leave out server-specific dependencies)
@@ -96,6 +99,10 @@ kotlin {
                 implementation(libs.sqldelight.native)
                 implementation(libs.ktor.client.darwin)
             }
+        }
+
+        jvmMain.dependencies {
+            implementation(libs.ktor.client.jetty)
         }
     }
 }
