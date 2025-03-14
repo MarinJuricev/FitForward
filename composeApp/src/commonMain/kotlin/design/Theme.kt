@@ -2,6 +2,9 @@
 
 package design
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +14,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -80,6 +85,7 @@ private val DarkColors = darkColorScheme(
     scrim = md_theme_dark_scrim,
 )
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun FitForwardTheme(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
@@ -93,10 +99,16 @@ fun FitForwardTheme(
 
     MaterialTheme(
         colorScheme = colors,
-        content = content
-    )
+    ) {
+        SharedTransitionLayout {
+            CompositionLocalProvider(
+                LocalSharedTransitionScope provides this
+            ) {
+                content()
+            }
+        }
+    }
 }
-
 
 @Preview()
 @Composable
@@ -137,7 +149,7 @@ private fun FitDesignSystemPreview() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        var textValue = "Input..."
+        val textValue = "Input..."
         FitTextField(
             value = textValue,
             onValueChange = { /* handle change */ },
@@ -148,3 +160,7 @@ private fun FitDesignSystemPreview() {
 
     }
 }
+
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope?> { null }
