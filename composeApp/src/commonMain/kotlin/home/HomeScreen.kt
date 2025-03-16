@@ -1,5 +1,6 @@
 package home
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,8 +22,9 @@ import androidx.compose.ui.unit.dp
 import design.FitBodyMediumText
 import design.FitCard
 import design.FitTopAppBar
+import design.LocalNavAnimatedVisibilityScope
+import design.LocalSharedTransitionScope
 import home.components.FitCalendarPicker
-import home.components.LazyAPIs
 import home.components.RoutinePicker
 import home.model.Exercise
 import home.presenter.CalendarState
@@ -86,6 +88,7 @@ fun HomeScreen(
     )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun ExerciseItem(
     exercise: Exercise,
@@ -99,13 +102,22 @@ private fun ExerciseItem(
             onExerciseEvent(ExerciseEvent.OnExerciseClicked(exercise))
         }
     ) {
-        FitBodyMediumText(
-            text = exercise.name,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        )
-
+        val sharedTransitionScope = LocalSharedTransitionScope.current
+            ?: error("LocalSharedTransitionScope not provided")
+        val animatedContentScope = LocalNavAnimatedVisibilityScope.current
+            ?: error("LocalNavAnimatedVisibilityScope not provided")
+        with(sharedTransitionScope) {
+            FitBodyMediumText(
+                text = exercise.name,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .sharedElement(
+                        sharedTransitionScope.rememberSharedContentState(key = exercise.id),
+                        animatedVisibilityScope = animatedContentScope
+                    )
+            )
+        }
     }
 }
 

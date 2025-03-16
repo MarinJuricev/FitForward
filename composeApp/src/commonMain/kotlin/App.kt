@@ -1,8 +1,6 @@
 @file:OptIn(ExperimentalSharedTransitionApi::class)
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -12,10 +10,8 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import design.FitForwardTheme
 import exercisedetail.ExerciseDetailRoute
@@ -36,6 +31,7 @@ import home.HomeScreen
 import home.HomeViewModel
 import home.presenter.ExerciseEffect
 import navigation.bottomItems
+import navigation.fitComposable
 import org.koin.compose.viewmodel.koinViewModel
 import profile.ProfileScreen
 import statistics.StatisticsScreen
@@ -85,7 +81,7 @@ fun App(
                 navController = navController,
                 startDestination = HomeRoute
             ) {
-                composable<HomeRoute> {
+                fitComposable<HomeRoute> {
                     val homeViewModel = koinViewModel<HomeViewModel>()
 
                     val calendarState by homeViewModel.calendarState.collectAsState()
@@ -97,7 +93,7 @@ fun App(
                         exerciseState.viewEffect.collect {
                             when (it) {
                                 is ExerciseEffect.OnExerciseClicked -> navController.navigate(
-                                    ExerciseDetailRoute(it.exercise.id)
+                                    ExerciseDetailRoute(it.exercise.id, "Pull")
                                 )
                             }
                         }
@@ -111,13 +107,17 @@ fun App(
                     )
                 }
 
-                composable<ExerciseDetailRoute> {
+                fitComposable<ExerciseDetailRoute> {
                     val exerciseDetailViewModel = koinViewModel<ExerciseDetailViewModel>()
+                    val test by exerciseDetailViewModel.exercise.collectAsState()
 
-                    ExerciseDetailsScreen()
+                    ExerciseDetailsScreen(
+                        exerciseId = test,
+                        exerciseName = "Pull-up",
+                    )
                 }
 
-                composable<StatisticsScreen> {
+                fitComposable<StatisticsScreen> {
                     Box(
                         modifier = Modifier.fillMaxSize()
                     ) {
@@ -128,7 +128,7 @@ fun App(
                     }
                 }
 
-                composable<ProfileScreen> {
+                fitComposable<ProfileScreen> {
                     Box(
                         modifier = Modifier.fillMaxSize()
                     ) {
