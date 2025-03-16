@@ -13,13 +13,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import design.FitBodyLargeText
 import design.FitBodyMediumText
+import design.FitBodySmallText
 import design.FitCard
 import design.FitTopAppBar
 import design.LocalNavAnimatedVisibilityScope
@@ -106,17 +109,28 @@ private fun ExerciseItem(
             ?: error("LocalSharedTransitionScope not provided")
         val animatedContentScope = LocalNavAnimatedVisibilityScope.current
             ?: error("LocalNavAnimatedVisibilityScope not provided")
-        with(sharedTransitionScope) {
-            FitBodyMediumText(
-                text = exercise.name,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .sharedElement(
-                        sharedTransitionScope.rememberSharedContentState(key = exercise.id),
-                        animatedVisibilityScope = animatedContentScope
-                    )
-            )
+
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            with(sharedTransitionScope) {
+                FitBodyLargeText(
+                    text = exercise.name,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .sharedElement(
+                            sharedTransitionScope.rememberSharedContentState(key = exercise.id),
+                            animatedVisibilityScope = animatedContentScope
+                        )
+                )
+            }
+            if (exercise.reps != null && exercise.sets != null) {
+                FitBodySmallText(
+                    text = "${exercise.sets} X ${exercise.reps}",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier
+                )
+            }
         }
     }
 }
