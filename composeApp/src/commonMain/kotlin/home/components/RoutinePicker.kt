@@ -1,6 +1,10 @@
 package home.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -19,7 +24,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,13 +39,15 @@ import design.FitBodySmallText
 import design.FitCard
 import design.FitOutlinedButton
 import design.FitTitleMediumText
+import design.LocalNavAnimatedVisibilityScope
+import design.LocalSharedTransitionScope
 import home.presenter.RoutineInfo
 import home.presenter.RoutinePickerEvent.NavigateToRoutines
 import home.presenter.RoutinePickerEvent.RoutineSelected
 import home.presenter.RoutinePickerState
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun RoutinePicker(
     routineState: RoutinePickerState,
@@ -50,6 +56,11 @@ fun RoutinePicker(
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
+    var isRoutinesExpanded by remember { mutableStateOf(false) }
+    val sharedTransitionScope = LocalSharedTransitionScope.current
+        ?: error("LocalSharedTransitionScope not provided")
+    val animatedContentScope = LocalNavAnimatedVisibilityScope.current
+        ?: error("LocalNavAnimatedVisibilityScope not provided")
 
     Row(
         modifier = modifier,
@@ -76,13 +87,39 @@ fun RoutinePicker(
             }
 
         }
-        // SharedBounds example ????
-        FitOutlinedButton(
-            modifier = Modifier.weight(0.3f),
-            onClick = {
-                routineState.onRoutineEvent(NavigateToRoutines)
+
+        with(sharedTransitionScope) {
+            if (!isRoutinesExpanded) {
+                FitOutlinedButton(
+                    modifier = Modifier.weight(0.3f)
+                        .sharedBounds(
+                            rememberSharedContentState(key = ROUTINE_KEY),
+                            animatedVisibilityScope = animatedContentScope,
+                            enter = fadeIn(),
+                            exit = fadeOut(),
+                            resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds()
+                        ),
+                    onClick = {
+                        isRoutinesExpanded = !isRoutinesExpanded
+                        routineState.onRoutineEvent(NavigateToRoutines)
+                    }
+                ) { FitBodyMediumText("Routines") }
+            } else {
+                FitCard(
+                    modifier = Modifier.size(250.dp)
+                        .sharedBounds(
+                            rememberSharedContentState(key = ROUTINE_KEY),
+                            animatedVisibilityScope = animatedContentScope,
+                            enter = fadeIn(),
+                            exit = fadeOut(),
+                            resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds()
+                        ),
+                    onClick = {
+                        isRoutinesExpanded = !isRoutinesExpanded
+                    }
+                ) { FitBodyMediumText("Routines") }
             }
-        ) { Text("Routines") }
+        }
     }
     if (showBottomSheet) {
         ModalBottomSheet(
@@ -156,3 +193,5 @@ private fun RoutineItem(
         }
     }
 }
+
+private const val ROUTINE_KEY = "routine"
