@@ -1,5 +1,6 @@
 package home.components
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -59,8 +60,6 @@ fun RoutinePicker(
     var isRoutinesExpanded by remember { mutableStateOf(false) }
     val sharedTransitionScope = LocalSharedTransitionScope.current
         ?: error("LocalSharedTransitionScope not provided")
-    val animatedContentScope = LocalNavAnimatedVisibilityScope.current
-        ?: error("LocalNavAnimatedVisibilityScope not provided")
 
     Row(
         modifier = modifier,
@@ -89,35 +88,53 @@ fun RoutinePicker(
         }
 
         with(sharedTransitionScope) {
-            if (!isRoutinesExpanded) {
-                FitOutlinedButton(
-                    modifier = Modifier.weight(0.3f)
-                        .sharedBounds(
-                            rememberSharedContentState(key = ROUTINE_KEY),
-                            animatedVisibilityScope = animatedContentScope,
-                            enter = fadeIn(),
-                            exit = fadeOut(),
-                            resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds()
-                        ),
-                    onClick = {
-                        isRoutinesExpanded = !isRoutinesExpanded
-                        routineState.onRoutineEvent(NavigateToRoutines)
+            AnimatedContent(isRoutinesExpanded) {
+                when (it) {
+                    true -> FitCard(
+                        modifier = Modifier.size(250.dp)
+                            .sharedBounds(
+                                rememberSharedContentState(key = ROUTINE_KEY),
+                                animatedVisibilityScope = this,
+                                placeHolderSize = SharedTransitionScope.PlaceHolderSize.animatedSize,
+                                resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds()
+                            ),
+                        onClick = {
+                            isRoutinesExpanded = !isRoutinesExpanded
+                        }
+                    ) {
+                        FitBodyMediumText(
+                            modifier = Modifier.sharedElement(
+                                sharedTransitionScope.rememberSharedContentState(key = ROUTINE_TEXT_KEY),
+                                animatedVisibilityScope = this
+                            ),
+                            text = "Routines"
+                        )
                     }
-                ) { FitBodyMediumText("Routines") }
-            } else {
-                FitCard(
-                    modifier = Modifier.size(250.dp)
-                        .sharedBounds(
-                            rememberSharedContentState(key = ROUTINE_KEY),
-                            animatedVisibilityScope = animatedContentScope,
-                            enter = fadeIn(),
-                            exit = fadeOut(),
-                            resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds()
-                        ),
-                    onClick = {
-                        isRoutinesExpanded = !isRoutinesExpanded
-                    }
-                ) { FitBodyMediumText("Routines") }
+
+                    false ->
+                        FitOutlinedButton(
+                            modifier = Modifier.weight(0.3f)
+                                .sharedBounds(
+                                    rememberSharedContentState(key = ROUTINE_KEY),
+                                    animatedVisibilityScope = this,
+                                    placeHolderSize = SharedTransitionScope.PlaceHolderSize.animatedSize,
+                                    resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds()
+                                ),
+                            onClick = {
+                                isRoutinesExpanded = !isRoutinesExpanded
+                                routineState.onRoutineEvent(NavigateToRoutines)
+                            }
+                        ) {
+                            FitBodyMediumText(
+                                modifier = Modifier.sharedElement(
+                                    sharedTransitionScope.rememberSharedContentState(key = ROUTINE_TEXT_KEY),
+                                    animatedVisibilityScope = this@AnimatedContent
+                                ),
+                                text = "Routines"
+                            )
+                        }
+
+                }
             }
         }
     }
@@ -195,3 +212,4 @@ private fun RoutineItem(
 }
 
 private const val ROUTINE_KEY = "routine"
+private const val ROUTINE_TEXT_KEY = "routineText"
