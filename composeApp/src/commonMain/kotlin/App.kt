@@ -89,7 +89,7 @@ fun App(
                     val routinePickerState by homeViewModel.routinePickerState.collectAsState()
                     val exerciseState by homeViewModel.exerciseState.collectAsState()
 
-                    LaunchedEffect(Unit) {
+                    LaunchedEffect(exerciseState.viewEffect) {
                         exerciseState.viewEffect.collect {
                             when (it) {
                                 is ExerciseEffect.OnExerciseClicked -> navController.navigate(
