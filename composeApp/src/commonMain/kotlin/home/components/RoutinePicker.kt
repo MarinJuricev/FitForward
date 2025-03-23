@@ -96,7 +96,6 @@ fun RoutinePicker(
         with(sharedTransitionScope) {
             FitOutlinedButton(
                 modifier = Modifier.weight(0.3f)
-                    .renderInSharedTransitionScopeOverlay()
                     .sharedBounds(
                         sharedContentState = rememberSharedContentState(key = ROUTINE_KEY),
                         animatedVisibilityScope = animatedContentScope,
