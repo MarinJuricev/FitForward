@@ -6,7 +6,10 @@ import androidx.compose.animation.BoundsTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.ArcMode
+import androidx.compose.animation.core.ExperimentalAnimationSpecApi
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -90,4 +93,15 @@ fun <T> nonSpatialExpressiveSpring() = spring<T>(
 @OptIn(ExperimentalSharedTransitionApi::class)
 val fitBoundsTransform = BoundsTransform { _, _ ->
     spatialExpressiveSpring()
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalAnimationSpecApi::class)
+fun arcTransform(
+    arcMode: ArcMode = ArcMode.ArcBelow
+) = BoundsTransform { initialBounds, targetBounds ->
+    keyframes {
+        durationMillis = 550
+        initialBounds at 0 using arcMode using FastOutSlowInEasing
+        targetBounds at 550
+    }
 }

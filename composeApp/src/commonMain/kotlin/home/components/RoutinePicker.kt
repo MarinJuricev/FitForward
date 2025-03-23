@@ -3,6 +3,10 @@ package home.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.ArcMode
+import androidx.compose.animation.core.ExperimentalAnimationSpecApi
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,9 +47,13 @@ import home.presenter.RoutinePickerEvent.NavigateToRoutines
 import home.presenter.RoutinePickerEvent.RoutineSelected
 import home.presenter.RoutinePickerState
 import kotlinx.coroutines.launch
+import navigation.arcTransform
 import navigation.fitBoundsTransform
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class,
+    ExperimentalAnimationSpecApi::class
+)
 @Composable
 fun RoutinePicker(
     routineState: RoutinePickerState,
@@ -90,11 +98,10 @@ fun RoutinePicker(
                 modifier = Modifier.weight(0.3f)
                     .renderInSharedTransitionScopeOverlay()
                     .sharedBounds(
-                        rememberSharedContentState(key = ROUTINE_KEY),
+                        sharedContentState = rememberSharedContentState(key = ROUTINE_KEY),
                         animatedVisibilityScope = animatedContentScope,
                         placeHolderSize = SharedTransitionScope.PlaceHolderSize.animatedSize,
-                        resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
-                        boundsTransform = fitBoundsTransform,
+                        boundsTransform = arcTransform(),
                     ),
                 onClick = {
                     routineState.onRoutineEvent(NavigateToRoutines)
@@ -104,7 +111,7 @@ fun RoutinePicker(
                     modifier = Modifier.sharedElement(
                         sharedTransitionScope.rememberSharedContentState(key = ROUTINE_TEXT_KEY),
                         animatedVisibilityScope = animatedContentScope,
-                        boundsTransform = fitBoundsTransform,
+                        boundsTransform = arcTransform(),
                     ),
                     text = "Routines"
                 )
