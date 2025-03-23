@@ -30,10 +30,13 @@ import home.HomeRoute
 import home.HomeScreen
 import home.HomeViewModel
 import home.presenter.ExerciseEffect
+import home.presenter.RoutinePickerEffect
 import navigation.bottomItems
 import navigation.fitComposable
 import org.koin.compose.viewmodel.koinViewModel
 import profile.ProfileScreen
+import routine_creation.RoutineCreationRoute
+import routine_creation.RoutineCreationScreen
 import statistics.StatisticsScreen
 
 @Composable
@@ -98,6 +101,15 @@ fun App(
                             }
                         }
                     }
+                    LaunchedEffect(routinePickerState.viewEffect) {
+                        routinePickerState.viewEffect.collect {
+                            when (it) {
+                                RoutinePickerEffect.OnRoutineClicked -> navController.navigate(
+                                    RoutineCreationRoute(null)
+                                )
+                            }
+                        }
+                    }
 
                     HomeScreen(
                         selectedDate = selectedDate,
@@ -114,6 +126,23 @@ fun App(
                     ExerciseDetailsScreen(
                         exerciseId = test,
                         exerciseName = "Pull-up",
+                    )
+                }
+
+                fitComposable<ExerciseDetailRoute> {
+                    val exerciseDetailViewModel = koinViewModel<ExerciseDetailViewModel>()
+                    val test by exerciseDetailViewModel.exercise.collectAsState()
+
+                    ExerciseDetailsScreen(
+                        exerciseId = test,
+                        exerciseName = "Pull-up",
+                    )
+                }
+
+                fitComposable<RoutineCreationRoute> {
+
+                    RoutineCreationScreen(
+                        tag = null,
                     )
                 }
 

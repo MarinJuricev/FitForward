@@ -1,9 +1,15 @@
 package navigation
 
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.BoundsTransform
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.BarChart
 import androidx.compose.material.icons.rounded.FitnessCenter
@@ -38,40 +44,30 @@ interface Route
 
 // References from
 // https://github.com/android/compose-samples/blob/3e509ff49d35b861fda8461e72469c23bb57085f/Jetsnack/app/src/main/java/com/example/jetsnack/ui/home/Home.kt#L88
-public inline fun <reified T : Any> NavGraphBuilder.fitComposable(
+inline fun <reified T : Any> NavGraphBuilder.fitComposable(
     typeMap: Map<KType, NavType<*>> = emptyMap(),
     deepLinks: List<NavDeepLink> = emptyList(),
-//    enterTransition: (
-//    @JvmSuppressWildcards
-//    AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?
-//    )? = {
-//        fadeIn(nonSpatialExpressiveSpring())
-//    },
-//    exitTransition: (
-//    @JvmSuppressWildcards
-//    AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition?
-//    )? = {
-//        fadeOut(nonSpatialExpressiveSpring())
-//    },
-//    popEnterTransition: (
-//    @JvmSuppressWildcards
-//    AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?
-//    )? =
-//        enterTransition,
-//    popExitTransition: (
-//    @JvmSuppressWildcards
-//    AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition?
-//    )? =
-//        exitTransition,
+    noinline enterTransition:
+    (AnimatedContentTransitionScope<NavBackStackEntry>.() -> @JvmSuppressWildcards
+    EnterTransition?)? = { fadeIn(nonSpatialExpressiveSpring()) },
+    noinline exitTransition:
+    (AnimatedContentTransitionScope<NavBackStackEntry>.() -> @JvmSuppressWildcards
+    ExitTransition?)? = { fadeOut(nonSpatialExpressiveSpring()) },
+    noinline popEnterTransition:
+    (AnimatedContentTransitionScope<NavBackStackEntry>.() -> @JvmSuppressWildcards
+    EnterTransition?)? = enterTransition,
+    noinline popExitTransition:
+    (AnimatedContentTransitionScope<NavBackStackEntry>.() -> @JvmSuppressWildcards
+    ExitTransition?)? = exitTransition,
     noinline content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
 ) {
     composable<T>(
         typeMap = typeMap,
         deepLinks = deepLinks,
-//        enterTransition,
-//        exitTransition,
-//        popEnterTransition,
-//        popExitTransition
+        enterTransition,
+        exitTransition = exitTransition,
+        popEnterTransition = popEnterTransition,
+        popExitTransition = popExitTransition
     ) {
         CompositionLocalProvider(
             LocalNavAnimatedVisibilityScope provides this@composable
@@ -82,16 +78,16 @@ public inline fun <reified T : Any> NavGraphBuilder.fitComposable(
 }
 
 fun <T> spatialExpressiveSpring() = spring<T>(
-    dampingRatio = 0.8f,
-    stiffness = 380f
+    dampingRatio = 0.85f,
+    stiffness = 150f,
 )
 
 fun <T> nonSpatialExpressiveSpring() = spring<T>(
     dampingRatio = 1f,
-    stiffness = 1600f
+    stiffness = 800f,
 )
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-val snackDetailBoundsTransform = BoundsTransform { _, _ ->
+val fitBoundsTransform = BoundsTransform { _, _ ->
     spatialExpressiveSpring()
 }
