@@ -37,6 +37,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import profile.ProfileScreen
 import routine_creation.RoutineCreationRoute
 import routine_creation.RoutineCreationScreen
+import routine_creation.RoutineCreationViewModel
 import statistics.StatisticsScreen
 
 @Composable
@@ -140,9 +141,11 @@ fun App(
                 }
 
                 fitComposable<RoutineCreationRoute> {
+                    val routineCreationViewModel = koinViewModel<RoutineCreationViewModel>()
+                    val state by routineCreationViewModel.viewState.collectAsState()
 
                     RoutineCreationScreen(
-                        tag = null,
+                        state = state
                     )
                 }
 

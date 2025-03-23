@@ -5,6 +5,7 @@ import home.di.homeModule
 import networking.networkModule
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
+import routine_creation.di.routineCreationModule
 
 fun initKoin(
     consumerDeclaration: KoinAppDeclaration = {},
@@ -17,6 +18,7 @@ fun initKoin(
             coreModule,
             homeModule,
             exerciseDetailModule,
+            routineCreationModule,
         )
     )
 }

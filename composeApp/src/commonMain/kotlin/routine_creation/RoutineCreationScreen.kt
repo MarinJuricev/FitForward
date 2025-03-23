@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import design.FitBodyMediumText
 import design.FitCard
+import design.FitTopAppBar
 import design.LocalNavAnimatedVisibilityScope
 import design.LocalSharedTransitionScope
 import home.components.ROUTINE_KEY
@@ -18,6 +19,7 @@ import home.components.ROUTINE_TEXT_KEY
 import kotlinx.serialization.Serializable
 import navigation.Route
 import navigation.arcTransform
+import routine_creation.model.RoutineCreationState
 
 @Serializable
 data class RoutineCreationRoute(
@@ -28,19 +30,25 @@ data class RoutineCreationRoute(
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalAnimationSpecApi::class)
 @Composable
 fun RoutineCreationScreen(
-    tag: String?
+    state: RoutineCreationState,
 ) {
     val sharedTransitionScope = LocalSharedTransitionScope.current
         ?: error("LocalSharedTransitionScope not provided")
     val animatedContentScope = LocalNavAnimatedVisibilityScope.current
         ?: error("LocalNavAnimatedVisibilityScope not provided")
+
     with(sharedTransitionScope) {
-        Scaffold() {
+        Scaffold(
+           topBar = {
+//              FitTopAppBar(
+//
+//              )
+           }
+        ) {
             FitCard(
                 modifier = Modifier
                     .padding(it)
                     .fillMaxWidth()
-                    .renderInSharedTransitionScopeOverlay()
                     .sharedBounds(
                         sharedContentState = rememberSharedContentState(key = ROUTINE_KEY),
                         animatedVisibilityScope = animatedContentScope,
