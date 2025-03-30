@@ -2,13 +2,19 @@ package routine_creation
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.ArcMode
 import androidx.compose.animation.core.ExperimentalAnimationSpecApi
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import design.FitBodyMediumText
 import design.FitCard
 import design.FitTopAppBar
@@ -27,7 +33,10 @@ data class RoutineCreationRoute(
 ) : Route
 
 
-@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalAnimationSpecApi::class)
+@OptIn(
+    ExperimentalSharedTransitionApi::class, ExperimentalAnimationSpecApi::class,
+    ExperimentalMaterial3Api::class
+)
 @Composable
 fun RoutineCreationScreen(
     state: RoutineCreationState,
@@ -39,15 +48,16 @@ fun RoutineCreationScreen(
 
     with(sharedTransitionScope) {
         Scaffold(
-           topBar = {
-//              FitTopAppBar(
-//
-//              )
-           }
+            topBar = {
+                FitTopAppBar(
+                    title = "Routine Creation"
+                )
+            }
         ) {
             FitCard(
                 modifier = Modifier
                     .padding(it)
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
                     .fillMaxWidth()
                     .sharedBounds(
                         sharedContentState = rememberSharedContentState(key = ROUTINE_KEY),
@@ -55,16 +65,24 @@ fun RoutineCreationScreen(
                         placeHolderSize = SharedTransitionScope.PlaceHolderSize.animatedSize,
                         resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
                         boundsTransform = arcTransform(ArcMode.ArcBelow),
-                    ),
+                    )
             ) {
-                FitBodyMediumText(
-                    modifier = Modifier.sharedElement(
-                        sharedTransitionScope.rememberSharedContentState(key = ROUTINE_TEXT_KEY),
-                        animatedVisibilityScope = animatedContentScope,
-                        boundsTransform = arcTransform(ArcMode.ArcBelow),
-                    ),
-                    text = "Routines"
-                )
+                Column {
+                    FitBodyMediumText(
+                        modifier = Modifier.sharedElement(
+                            sharedTransitionScope.rememberSharedContentState(key = ROUTINE_TEXT_KEY),
+                            animatedVisibilityScope = animatedContentScope,
+                            boundsTransform = arcTransform(ArcMode.ArcBelow),
+                        ),
+                        text = "Routines"
+                    )
+
+                    LazyColumn {
+                        items(state.routines, key = { routine -> routine.id }) { routine ->
+                            FitBodyMediumText(routine.name)
+                        }
+                    }
+                }
             }
         }
     }

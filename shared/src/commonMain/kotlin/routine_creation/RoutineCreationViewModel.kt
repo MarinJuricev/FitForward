@@ -7,12 +7,25 @@ import home.repository.RoutineRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import routine_creation.model.RoutineCreationState
 
 class RoutineCreationViewModel(
-    val routineRepository: RoutineRepository
+    private val routineRepository: RoutineRepository
 ) : ViewModel() {
+
+    init {
+        routineRepository
+            .observeRoutines()
+            .onEach { routines ->
+                activeRoutines.update { routines }
+            }.launchIn(viewModelScope)
+    }
 
     private val activeRoutines = MutableStateFlow<List<Routine>>(emptyList())
     private val isCreationActive = MutableStateFlow(false)
@@ -22,7 +35,7 @@ class RoutineCreationViewModel(
         isCreationActive,
     ) { activeRoutines, isCreationActive ->
         RoutineCreationState(
-            activeRoutines = activeRoutines,
+            routines = activeRoutines,
             isCreateActive = isCreationActive,
             routineCreationEvent = {
 
