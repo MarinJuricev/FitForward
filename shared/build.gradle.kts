@@ -70,10 +70,19 @@ kotlin {
             implementation(libs.sqldelight.primitive.adapters)
             implementation(libs.arrow.coroutines)
 
+
             api(libs.kotlinx.serialization.json)
             api(libs.arrow.core)
             api(libs.kotlinx.coroutines.core)
             api(libs.kotlinx.datetime)
+        }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.koin.test)
+                implementation(libs.turbine)
+            }
         }
 
         val mobileMain by creating {
@@ -91,7 +100,9 @@ kotlin {
                 implementation(libs.sqldelight.android)
                 implementation(libs.ktor.client.okhttp)
             }
+
         }
+
 
         nativeMain {
             dependsOn(mobileMain)
@@ -116,6 +127,12 @@ android {
     }
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
+    }
+
+    testOptions {
+        unitTests {
+            isReturnDefaultValues = true
+        }
     }
 }
 
