@@ -10,12 +10,14 @@ import home.repository.RoutineRepository
 import kotlinx.coroutines.runBlocking
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
+import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 import org.koin.test.inject
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import org.koin.dsl.bind
 import kotlin.test.assertEquals
 
 class RoutinePickerPresenterMoleculeFlowTest : KoinTest {
@@ -31,7 +33,7 @@ class RoutinePickerPresenterMoleculeFlowTest : KoinTest {
                     coreModule,
                     homeModule,
                     module {
-                        single<RoutineRepository> { FakeRoutineRepository() }
+                        factoryOf(::FakeRoutineRepository) bind RoutineRepository::class
                     }
                 )
             )
