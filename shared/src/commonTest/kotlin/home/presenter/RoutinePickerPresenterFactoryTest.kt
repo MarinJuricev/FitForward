@@ -10,7 +10,6 @@ import home.repository.RoutineRepository
 import kotlinx.coroutines.runBlocking
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
-import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 import org.koin.test.inject
@@ -32,8 +31,9 @@ class RoutinePickerPresenterMoleculeFlowTest : KoinTest {
                 listOf(
                     coreModule,
                     homeModule,
+                    // Override the production repository with the fake.
                     module {
-                        factoryOf(::FakeRoutineRepository) bind RoutineRepository::class
+                        factory { FakeRoutineRepository() } bind RoutineRepository::class
                     }
                 )
             )
@@ -54,7 +54,6 @@ class RoutinePickerPresenterMoleculeFlowTest : KoinTest {
                 RoutinePickerPresenter(this, selectedDate, repository)
             }.test {
                 val state = awaitItem()
-
                 state.onRoutineEvent(RoutinePickerEvent.NavigateToRoutines)
 
                 state.viewEffect.test {
@@ -65,4 +64,23 @@ class RoutinePickerPresenterMoleculeFlowTest : KoinTest {
                 cancelAndIgnoreRemainingEvents()
             }
         }
+
+    @Test
+    fun `test routine picker presenter loads routines from fake repository`() = runBlocking {
+        val selectedDate = "2021-01-01"
+
+        moleculeFlow(mode = RecompositionMode.Immediate) {
+            RoutinePickerPresenter(this, selectedDate, repository)
+        }.test {
+            val initialEmission = awaitItem()
+            assertEquals(0, initialEmission.routines.size)
+
+            val state = awaitItem()
+            assertEquals(1, state.routines.size)
+            assertEquals("Test Routine", state.routines.first().name)
+            assertEquals("Test Routine", state.selectedRoutine?.name)
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
 }
