@@ -1,6 +1,5 @@
-@file:OptIn(ExperimentalSharedTransitionApi::class)
-
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -18,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -79,9 +79,8 @@ fun App(
                     }
                 }
             },
-        ) { paddingValues ->
+        ) { _ ->
             NavHost(
-                modifier = Modifier.padding(paddingValues),
                 navController = navController,
                 startDestination = HomeRoute
             ) {

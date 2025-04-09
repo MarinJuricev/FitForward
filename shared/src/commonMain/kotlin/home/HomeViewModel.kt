@@ -22,6 +22,7 @@ class HomeViewModel(
 ) : ViewModel() {
 
     val calendarState = calendarPresenterFactory.create(viewModelScope)
+
     val selectedDate = calendarState
         .map { state -> state.days.find { it.isSelected }?.date }
         .filterNotNull()

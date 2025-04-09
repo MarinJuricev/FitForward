@@ -4,6 +4,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.ArcMode
 import androidx.compose.animation.core.ExperimentalAnimationSpecApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import design.FitBodyMediumText
 import design.FitCard
@@ -102,12 +104,11 @@ fun RoutineCreationScreen(
                         ),
                         text = "Routines"
                     )
-
                 }
-            }
-            LazyColumn {
-                items(state.routines, key = { routine -> routine.id }) { routine ->
-                    FitBodyMediumText(routine.name)
+                LazyColumn {
+                    items(state.routines, key = { routine -> routine.id }) { routine ->
+                        FitBodyMediumText(routine.name)
+                    }
                 }
             }
         }

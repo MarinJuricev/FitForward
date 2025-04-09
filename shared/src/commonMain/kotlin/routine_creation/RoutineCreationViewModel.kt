@@ -19,14 +19,6 @@ class RoutineCreationViewModel(
     private val routineRepository: RoutineRepository
 ) : ViewModel() {
 
-    init {
-        routineRepository
-            .observeRoutines()
-            .onEach { routines ->
-                activeRoutines.update { routines }
-            }.launchIn(viewModelScope)
-    }
-
     private val activeRoutines = MutableStateFlow<List<Routine>>(emptyList())
     private val isCreationActive = MutableStateFlow(false)
 
@@ -41,7 +33,15 @@ class RoutineCreationViewModel(
 
             }
         )
+    }.onStart {
+        observeRoutines()
     }.stateIn(viewModelScope, SharingStarted.Lazily, RoutineCreationState())
 
-
+    private fun observeRoutines() {
+        routineRepository
+            .observeRoutines()
+            .onEach { routines ->
+                activeRoutines.update { routines }
+            }.launchIn(viewModelScope)
+    }
 }
