@@ -50,7 +50,7 @@ data class RoutineCreationRoute(
 fun RoutineCreationScreen(
     state: RoutineCreationState,
 ) {
-    val sharedTransitionScope = LocalSharedTransitionScoe.current
+    val sharedTransitionScope = LocalSharedTransitionScope.current
         ?: error("LocalSharedTransitionScope not provided")
     val animatedContentScope = LocalNavAnimatedVisibilityScope.current
         ?: error("LocalNavAnimatedVisibilityScope not provided")
