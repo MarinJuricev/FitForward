@@ -13,7 +13,7 @@ plugins {
 
 kotlin {
     @OptIn(ExperimentalWasmDsl::class)
-//    SqlDelight does not support WASM ye, revisit WASM at a later time
+//    TODO: SqlDelight does not support WASM ye, revisit WASM at a later time
 //    wasmJs {
 //        browser {
 //            val projectDirPath = project.projectDir.path
@@ -113,6 +113,7 @@ kotlin {
         }
 
         jvmMain.dependencies {
+            implementation(libs.sqldelight.jvm.sqlite)
             implementation(libs.ktor.client.jetty)
         }
     }

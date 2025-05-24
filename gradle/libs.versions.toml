@@ -8,23 +8,30 @@ androidx-activityCompose = "1.10.1"
 androidx-appcompat = "1.7.0"
 androidx-core-ktx = "1.15.0"
 androidx-espresso-core = "3.6.1"
-androidx-lifecycle = "2.8.2"
+androidx-lifecycle = "2.8.3"
 androidx-material = "1.12.0"
 androidx-test-junit = "1.2.1"
 compose-plugin = "1.7.0-beta01"
 junit = "4.13.2"
-kotlin = "2.1.10"
+kotlin = "2.1.20"
 koin = "4.0.0"
 kotlinxSerializationJson = "1.7.2"
-ksp = "2.1.10-1.0.29"
+ksp = "2.1.20-2.0.1"
 kotlinx-coroutines = "1.10.1"
 kotlinxDatetime = "0.6.1"
 ktor = "2.3.12"
 logback = "1.5.7"
 moleculeRuntime = "2.0.0"
 navigationCompose = "2.8.0-alpha10"
-sqldelight = "2.0.2"
+sqldelight = "2.1.0"
 turbine = "1.2.0"
+hotReload = "1.0.0-alpha10"
+
+nav3Core = "1.0.0-alpha01"
+nav3Material = "1.0.0-SNAPSHOT"
+nav3Lifecycle = "1.0.0-alpha01"
+kotlinSerialization = "2.1.21"
+kotlinxSerializationCore = "1.8.1"
 
 [libraries]
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
@@ -66,6 +73,8 @@ koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
+sqldelight-jvm-sqlite = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
+
 sqldelight-primitive-adapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
 sqldelight-dialect-sqlite = { group = "app.cash.sqldelight", name = "sqlite-3-24-dialect", version.ref = "sqldelight" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
@@ -81,3 +90,4 @@ ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 sqlDelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
+hotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "hotReload" }
