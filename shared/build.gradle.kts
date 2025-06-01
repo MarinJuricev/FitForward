@@ -115,6 +115,10 @@ kotlin {
         jvmMain.dependencies {
             implementation(libs.sqldelight.jvm.sqlite)
             implementation(libs.ktor.client.jetty)
+
+//            //TODO: Do i really need this, why can't I see singleOf ?
+//            implementation(project.dependencies.platform(libs.koin.bom))
+//            implementation(libs.koin.core)
         }
     }
 }
