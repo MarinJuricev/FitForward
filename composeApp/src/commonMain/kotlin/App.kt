@@ -38,6 +38,7 @@ import profile.ProfileScreen
 import routine_creation.RoutineCreationRoute
 import routine_creation.RoutineCreationScreen
 import routine_creation.RoutineCreationViewModel
+import routine_creation.model.RoutineCreationEffect.*
 import statistics.StatisticsScreen
 
 @Composable
@@ -142,6 +143,15 @@ fun App(
                 fitComposable<RoutineCreationRoute> {
                     val routineCreationViewModel = koinViewModel<RoutineCreationViewModel>()
                     val state by routineCreationViewModel.viewState.collectAsState()
+
+                    LaunchedEffect(routineCreationViewModel) {
+                        routineCreationViewModel.viewEffect.collect { effect ->
+                            when (effect) {
+                                NavigateBack -> navController.popBackStack()
+                            }
+
+                        }
+                    }
 
                     RoutineCreationScreen(
                         state = state

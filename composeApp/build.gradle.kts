@@ -1,4 +1,6 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.compose.reload.ComposeHotRun
+import org.jetbrains.compose.reload.core.HotReloadEnvironment.mainClass
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -77,6 +79,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.swing)
         }
     }
+
 }
 
 android {
@@ -131,4 +134,8 @@ compose.desktop {
             packageVersion = "1.0.0"
         }
     }
+}
+
+tasks.withType<ComposeHotRun>().configureEach {
+    mainClass.set("com.example.MainKt")
 }
