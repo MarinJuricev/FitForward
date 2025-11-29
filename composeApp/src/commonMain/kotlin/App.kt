@@ -1,6 +1,5 @@
-@file:OptIn(ExperimentalSharedTransitionApi::class)
-
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -18,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -30,10 +30,15 @@ import home.HomeRoute
 import home.HomeScreen
 import home.HomeViewModel
 import home.presenter.ExerciseEffect
+import home.presenter.RoutinePickerEffect
 import navigation.bottomItems
 import navigation.fitComposable
 import org.koin.compose.viewmodel.koinViewModel
 import profile.ProfileScreen
+import routine_creation.RoutineCreationRoute
+import routine_creation.RoutineCreationScreen
+import routine_creation.RoutineCreationViewModel
+import routine_creation.model.RoutineCreationEffect.*
 import statistics.StatisticsScreen
 
 @Composable
@@ -75,9 +80,8 @@ fun App(
                     }
                 }
             },
-        ) { paddingValues ->
+        ) { _ ->
             NavHost(
-                modifier = Modifier.padding(paddingValues),
                 navController = navController,
                 startDestination = HomeRoute
             ) {
@@ -89,11 +93,20 @@ fun App(
                     val routinePickerState by homeViewModel.routinePickerState.collectAsState()
                     val exerciseState by homeViewModel.exerciseState.collectAsState()
 
-                    LaunchedEffect(Unit) {
+                    LaunchedEffect(exerciseState.viewEffect) {
                         exerciseState.viewEffect.collect {
                             when (it) {
                                 is ExerciseEffect.OnExerciseClicked -> navController.navigate(
                                     ExerciseDetailRoute(it.exercise.id, "Pull")
+                                )
+                            }
+                        }
+                    }
+                    LaunchedEffect(routinePickerState.viewEffect) {
+                        routinePickerState.viewEffect.collect {
+                            when (it) {
+                                RoutinePickerEffect.OnRoutineClicked -> navController.navigate(
+                                    RoutineCreationRoute(null)
                                 )
                             }
                         }
@@ -114,6 +127,34 @@ fun App(
                     ExerciseDetailsScreen(
                         exerciseId = test,
                         exerciseName = "Pull-up",
+                    )
+                }
+
+                fitComposable<ExerciseDetailRoute> {
+                    val exerciseDetailViewModel = koinViewModel<ExerciseDetailViewModel>()
+                    val test by exerciseDetailViewModel.exercise.collectAsState()
+
+                    ExerciseDetailsScreen(
+                        exerciseId = test,
+                        exerciseName = "Pull-up",
+                    )
+                }
+
+                fitComposable<RoutineCreationRoute> {
+                    val routineCreationViewModel = koinViewModel<RoutineCreationViewModel>()
+                    val state by routineCreationViewModel.viewState.collectAsState()
+
+                    LaunchedEffect(routineCreationViewModel) {
+                        routineCreationViewModel.viewEffect.collect { effect ->
+                            when (effect) {
+                                NavigateBack -> navController.popBackStack()
+                            }
+
+                        }
+                    }
+
+                    RoutineCreationScreen(
+                        state = state
                     )
                 }
 

@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 fun FitTopAppBar(
     title: String,
     modifier: Modifier = Modifier,
+    navigationIcon: @Composable () -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior? = null,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
@@ -22,6 +23,7 @@ fun FitTopAppBar(
         title = { FitTitleLargeText(text = title) },
         scrollBehavior = scrollBehavior,
         actions = actions,
+        navigationIcon = navigationIcon,
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.surface,
             titleContentColor = MaterialTheme.colorScheme.onSurface

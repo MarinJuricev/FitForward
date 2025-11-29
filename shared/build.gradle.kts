@@ -13,7 +13,7 @@ plugins {
 
 kotlin {
     @OptIn(ExperimentalWasmDsl::class)
-//    SqlDelight does not support WASM ye, revisit WASM at a later time
+//    TODO: SqlDelight does not support WASM ye, revisit WASM at a later time
 //    wasmJs {
 //        browser {
 //            val projectDirPath = project.projectDir.path
@@ -70,10 +70,19 @@ kotlin {
             implementation(libs.sqldelight.primitive.adapters)
             implementation(libs.arrow.coroutines)
 
+
             api(libs.kotlinx.serialization.json)
             api(libs.arrow.core)
             api(libs.kotlinx.coroutines.core)
             api(libs.kotlinx.datetime)
+        }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.koin.test)
+                implementation(libs.turbine)
+            }
         }
 
         val mobileMain by creating {
@@ -91,7 +100,9 @@ kotlin {
                 implementation(libs.sqldelight.android)
                 implementation(libs.ktor.client.okhttp)
             }
+
         }
+
 
         nativeMain {
             dependsOn(mobileMain)
@@ -102,7 +113,12 @@ kotlin {
         }
 
         jvmMain.dependencies {
+            implementation(libs.sqldelight.jvm.sqlite)
             implementation(libs.ktor.client.jetty)
+
+//            //TODO: Do i really need this, why can't I see singleOf ?
+//            implementation(project.dependencies.platform(libs.koin.bom))
+//            implementation(libs.koin.core)
         }
     }
 }
@@ -116,6 +132,12 @@ android {
     }
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
+    }
+
+    testOptions {
+        unitTests {
+            isReturnDefaultValues = true
+        }
     }
 }
 

@@ -1,6 +1,12 @@
 package home.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.ArcMode
+import androidx.compose.animation.core.ExperimentalAnimationSpecApi
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,7 +25,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,13 +40,20 @@ import design.FitBodySmallText
 import design.FitCard
 import design.FitOutlinedButton
 import design.FitTitleMediumText
+import design.LocalNavAnimatedVisibilityScope
+import design.LocalSharedTransitionScope
 import home.presenter.RoutineInfo
 import home.presenter.RoutinePickerEvent.NavigateToRoutines
 import home.presenter.RoutinePickerEvent.RoutineSelected
 import home.presenter.RoutinePickerState
 import kotlinx.coroutines.launch
+import navigation.arcTransform
+import navigation.fitBoundsTransform
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class,
+    ExperimentalAnimationSpecApi::class
+)
 @Composable
 fun RoutinePicker(
     routineState: RoutinePickerState,
@@ -50,6 +62,10 @@ fun RoutinePicker(
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
+    val sharedTransitionScope = LocalSharedTransitionScope.current
+        ?: error("LocalSharedTransitionScope not provided")
+    val animatedContentScope = LocalNavAnimatedVisibilityScope.current
+        ?: error("LocalNavAnimatedVisibilityScope not provided")
 
     Row(
         modifier = modifier,
@@ -76,13 +92,30 @@ fun RoutinePicker(
             }
 
         }
-        // SharedBounds example ????
-        FitOutlinedButton(
-            modifier = Modifier.weight(0.3f),
-            onClick = {
-                routineState.onRoutineEvent(NavigateToRoutines)
+
+        with(sharedTransitionScope) {
+            FitOutlinedButton(
+                modifier = Modifier.weight(0.3f)
+                    .sharedBounds(
+                        sharedContentState = rememberSharedContentState(key = ROUTINE_KEY),
+                        animatedVisibilityScope = animatedContentScope,
+                        placeHolderSize = SharedTransitionScope.PlaceHolderSize.animatedSize,
+                        boundsTransform = arcTransform(),
+                    ),
+                onClick = {
+                    routineState.onRoutineEvent(NavigateToRoutines)
+                }
+            ) {
+                FitBodyMediumText(
+                    modifier = Modifier.sharedElement(
+                        sharedTransitionScope.rememberSharedContentState(key = ROUTINE_TEXT_KEY),
+                        animatedVisibilityScope = animatedContentScope,
+                        boundsTransform = arcTransform(),
+                    ),
+                    text = "Routines"
+                )
             }
-        ) { Text("Routines") }
+        }
     }
     if (showBottomSheet) {
         ModalBottomSheet(
@@ -156,3 +189,6 @@ private fun RoutineItem(
         }
     }
 }
+
+const val ROUTINE_KEY = "routine"
+const val ROUTINE_TEXT_KEY = "routineText"

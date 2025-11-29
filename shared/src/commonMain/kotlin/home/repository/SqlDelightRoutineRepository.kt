@@ -14,7 +14,6 @@ import kotlinx.coroutines.withContext
 
 class SqlDelightRoutineRepository(
     private val fitForwardDatabase: FitForwardDatabase,
-    private val idProvider: IdProvider,
     private val coroutineDispatchers: AppCoroutineDispatchers,
 ) : RoutineRepository {
 

@@ -15,10 +15,14 @@ import home.presenter.RoutinePickerEvent.NavigateToRoutines
 import home.presenter.RoutinePickerEvent.RoutineSelected
 import home.repository.RoutineRepository
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 sealed interface RoutinePickerEvent {
@@ -39,8 +43,13 @@ fun Routine.toRoutineInfo(
 data class RoutinePickerState(
     val routines: List<RoutineInfo> = emptyList(),
     val selectedRoutine: RoutineInfo? = null,
+    val viewEffect: Flow<RoutinePickerEffect> = emptyFlow(),
     val onRoutineEvent: (RoutinePickerEvent) -> Unit = {},
 )
+
+sealed interface RoutinePickerEffect {
+    data object OnRoutineClicked : RoutinePickerEffect
+}
 
 data class RoutineInfo(
     val id: String,
@@ -76,6 +85,7 @@ internal fun RoutinePickerPresenter(
         .observeRoutines()
         .map { routine -> routine.map(Routine::toRoutineInfo) }
         .collectAsState(emptyList())
+    val viewEffect = remember { Channel<RoutinePickerEffect>(Channel.BUFFERED) }
     var selectedRoutine by remember { mutableStateOf<RoutineInfo?>(null) }
 
     LaunchedEffect(selectedDate) {
@@ -89,6 +99,7 @@ internal fun RoutinePickerPresenter(
     return RoutinePickerState(
         routines = availableRoutines,
         selectedRoutine = selectedRoutine,
+        viewEffect = viewEffect.receiveAsFlow(),
         onRoutineEvent = { event ->
             when (event) {
                 is RoutineSelected -> coroutineScope.launch {
@@ -105,8 +116,8 @@ internal fun RoutinePickerPresenter(
                     routineRepository.upsertRoutineHistory(routineHistory)
                 }
 
-                is NavigateToRoutines -> {
-
+                is NavigateToRoutines -> coroutineScope.launch {
+                    viewEffect.send(RoutinePickerEffect.OnRoutineClicked)
                 }
             }
         }
